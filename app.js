@@ -19,7 +19,9 @@ app.set('port', process.env.PORT || 3000);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.enable('view cache');
+if (app.get('env') !== 'development') {
+  app.enable('view cache');
+}
 app.enable('trust proxy');
 app.use(favicon());
 app.use(logger('dev'));
