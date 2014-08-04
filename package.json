@@ -17,6 +17,7 @@
     "connect-redis": "~2.0.0",
     "mysql": "~2.4.1",
     "q": "~1.0.1",
+    "restler": "~3.2.2",
     "connect-mysql": "~2.1.1"
   }
 }
