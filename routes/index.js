@@ -6,6 +6,7 @@ var express    = require('express'),
     crypto     = require('crypto'),
     mysql      = require('mysql'),
     moment     = require('moment'),
+    hat        = require('hat'),
     debugOn    = true;
 
 router.get('/', function(req, res) {
