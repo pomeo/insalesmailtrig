@@ -9,6 +9,15 @@ var express    = require('express'),
     hat        = require('hat'),
     debugOn    = true;
 
+var connection = mysql.createConnection({
+  host: process.env.mysqlhost,
+  user: process.env.mysqluser,
+  password: process.env.mysqlpass,
+  database: process.env.mysqldb
+});
+
+connection.connect();
+
 router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
 });
@@ -26,3 +35,5 @@ function log(logMsg) {
     }
   }
 };
+
+connection.end();
