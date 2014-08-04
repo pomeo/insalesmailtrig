@@ -7,6 +7,13 @@ var express    = require('express'),
     mysql      = require('mysql'),
     moment     = require('moment'),
     hat        = require('hat'),
+    winston    = require('winston'),
+    logger     = new (winston.Logger)({
+      transports: [
+        new (winston.transports.Console)(),
+        new (winston.transports.File)({ filename: process.env.applog + 'app.log' })
+      ]
+    }),
     debugOn    = true;
 
 var connection = mysql.createConnection({
@@ -33,12 +40,12 @@ module.exports = router;
 
 //Логгер в одном месте, для упрощения перезда на любой логгер.
 function log(logMsg) {
-  if (logMsg instanceof Error) console.log(logMsg.stack);
+  if (logMsg instanceof Error) logger.error(logMsg.stack);
   if (debugOn) {
     if (typeof logMsg == 'object') {
       console.dir(logMsg);
     } else {
-      console.log(logMsg);
+      logger.info(logMsg);
     }
   }
 };
