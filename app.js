@@ -1,13 +1,21 @@
-var express = require('express');
-var debug = require('debug')('my-application');
-var session = require('express-session');
-var RedisStore = require('connect-redis')(session);
-var path = require('path');
-var favicon = require('static-favicon');
-var stylus = require('stylus');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express = require('express'),
+    debug = require('debug')('mailtrig'),
+    session = require('express-session'),
+    mysql = require('mysql'),
+    MySQLStore = require('connect-mysql')(express),
+    options = {
+      config: {
+        host: process.env.mysqlhost,
+        user: process.env.mysqluser,
+        password: process.env.mysqlpass,
+        database: process.env.mysqldb
+      }
+    },
+    path = require('path'),
+    favicon = require('static-favicon'),
+    logger = require('morgan'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
