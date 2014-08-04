@@ -2,6 +2,7 @@ var express    = require('express'),
     router     = express.Router(),
     Q          = require('q'),
     rest       = require('restler'),
+    xml2js     = require('xml2js'),
     debugOn    = true;
 
 router.get('/', function(req, res) {
