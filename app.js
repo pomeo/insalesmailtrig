@@ -2,7 +2,7 @@ var express = require('express'),
     debug = require('debug')('mailtrig'),
     session = require('express-session'),
     mysql = require('mysql'),
-    MySQLStore = require('connect-mysql')(express),
+    MySQLStore = require('connect-mysql')(session),
     options = {
       config: {
         host: process.env.mysqlhost,
