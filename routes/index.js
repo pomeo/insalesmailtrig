@@ -4,6 +4,7 @@ var express    = require('express'),
     rest       = require('restler'),
     xml2js     = require('xml2js'),
     crypto     = require('crypto'),
+    mysql      = require('mysql'),
     debugOn    = true;
 
 router.get('/', function(req, res) {
