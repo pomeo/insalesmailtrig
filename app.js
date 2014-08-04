@@ -37,14 +37,6 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(session({secret: process.env.SECRET, store: new MySQLStore(options)}))
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(stylus.middleware({
-      src: __dirname + '/stylus',
-      dest: __dirname + '/public',
-      compile: function(str, path) {
-          return stylus(str)
-            .set('compress', true);
-      }
-  }));
 
 app.use('/', routes);
 app.use('/users', users);
