@@ -27,7 +27,7 @@ db.on("connect", function (err) {
 });
 
 router.get('/', function(req, res) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: '' });
 });
 
 module.exports = router;
