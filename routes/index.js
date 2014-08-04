@@ -16,7 +16,14 @@ var connection = mysql.createConnection({
   database: process.env.mysqldb
 });
 
-connection.connect();
+connection.connect(function(err) {
+  if (err) {
+    log('Ошибка соединения с mysql: ' + err.stack);
+    return;
+  }
+
+  log('Успешное соединение с mysql, id=' + connection.threadId);
+});
 
 router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
@@ -36,4 +43,6 @@ function log(logMsg) {
   }
 };
 
-connection.end();
+connection.end(function(err) {
+  log('Завершаем соединение с mysql');
+});
