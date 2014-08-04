@@ -32,6 +32,28 @@ router.get('/', function(req, res) {
 
 module.exports = router;
 
+//Схема базы данных
+var User = db.define('users', {
+  insalesid    : { type: 'integer', unique: true },
+  insalesurl   : { type: 'text' },
+  token        : { type: 'text' },
+  mailtrig     : { type: 'boolean' },
+  appid        : { type: 'integer' },
+  nameshop     : { type: 'text' },
+  nameadmin    : { type: 'text' },
+  phone        : { type: 'integer' },
+  email        : { type: 'text' },
+  username     : { type: 'text' },
+  jstagid_main : { type: 'integer' },
+  jstagid_var  : { type: 'integer' },
+  autologin    : { type: 'text' },
+  webhook      : { type: 'boolean' },
+  cookie       : { type: 'boolean' },
+  created_at   : { type: 'date' },
+  updated_at   : { type: 'date' },
+  enabled      : { type: 'boolean' }
+});
+
 //Логгер в одном месте, для упрощения перезда на любой логгер.
 function log(logMsg) {
   if (logMsg instanceof Error) logger.error(logMsg.stack);
