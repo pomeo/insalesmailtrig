@@ -35,7 +35,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
-app.use(session({ store: new RedisStore({host:'redis.fr1.server.sovechkin.com', port:6379, pass:''}), secret: process.env.SECRET }))
+app.use(session({secret: process.env.SECRET, store: new MySQLStore(options)}))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(stylus.middleware({
       src: __dirname + '/stylus',
