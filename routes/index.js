@@ -17,12 +17,12 @@ var express    = require('express'),
     }),
     debugOn    = true;
 
-orm.connect('mysql://' + process.env.mysqluser + ':' + process.env.mysqlpass + '@' + process.env.mysqlhost + '/' + process.env.mysqldb, function (err, db) {
+db.on("connect", function (err) {
   if (err) {
-    log('Ошибка соединения с mysql: ' + err);
-    throw err;
+    log('Ошибка соединения с mysql: ', err);
+    return;
   } else {
-
+    log('Успешное подключение к mysql');
   }
 });
 
