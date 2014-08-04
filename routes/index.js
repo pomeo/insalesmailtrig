@@ -4,7 +4,7 @@ var express    = require('express'),
     rest       = require('restler'),
     xml2js     = require('xml2js'),
     crypto     = require('crypto'),
-    mysql      = require('mysql'),
+    orm        = require('orm'),
     moment     = require('moment'),
     hat        = require('hat'),
     winston    = require('winston'),
@@ -16,20 +16,13 @@ var express    = require('express'),
     }),
     debugOn    = true;
 
-var connection = mysql.createConnection({
-  host: process.env.mysqlhost,
-  user: process.env.mysqluser,
-  password: process.env.mysqlpass,
-  database: process.env.mysqldb
-});
-
-connection.connect(function(err) {
+orm.connect('mysql://' + process.env.mysqluser + ':' + process.env.mysqlpass + '@' + process.env.mysqlhost + '/' + process.env.mysqldb, function (err, db) {
   if (err) {
-    log('Ошибка соединения с mysql: ' + err.stack);
-    return;
-  }
+    log('Ошибка соединения с mysql: ' + err);
+    throw err;
+  } else {
 
-  log('Успешное соединение с mysql, id=' + connection.threadId);
+  }
 });
 
 router.get('/', function(req, res) {
@@ -49,7 +42,3 @@ function log(logMsg) {
     }
   }
 };
-
-connection.end(function(err) {
-  log('Завершаем соединение с mysql');
-});
