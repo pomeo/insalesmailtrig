@@ -3,6 +3,7 @@ var express    = require('express'),
     Q          = require('q'),
     rest       = require('restler'),
     xml2js     = require('xml2js'),
+    crypto     = require('crypto'),
     debugOn    = true;
 
 router.get('/', function(req, res) {
