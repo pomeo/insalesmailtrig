@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+var express    = require('express'),
+    router     = express.Router(),
+    debugOn    = true;
 
 router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
