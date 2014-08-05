@@ -30,6 +30,61 @@ router.get('/', function(req, res) {
   res.render('index', { title: '' });
 });
 
+// Сюда приходит запрос от insales на установку приложения
+router.get('/install', function(req, res) {
+  if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
+    User.find({ insalesid: req.query.insales_id }, function (err, u) {
+      if (u[0] == null) {
+        User.create([{
+          insalesid    : req.query.insales_id,
+          insalesurl   : req.query.shop,
+          token        : crypto.createHash('md5').update(req.query.token + process.env.insalessecret).digest('hex'),
+          mailtrig     : false,
+          jstagid_main : 0,
+          jstagid_var  : 0,
+          cookie       : false,
+          created_at   : moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ'),
+          updated_at   : moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ'),
+          webhook      : false,
+          enabled      : true
+        }], function (err, app) {
+              if (err) {
+                log('Ошибка установки приложения в insales');
+                log(err);
+                res.send(err, 500);
+              } else {
+                log('Приложение успешно установлено в insales');
+                log(app);
+                res.send(200);
+              }
+            });
+      } else {
+        if (u[0].enabled == true) {
+          res.send('Приложение уже установленно', 403);
+        } else {
+          u[0].token = crypto.createHash('md5').update(req.query.token + process.env.insalessecret).digest('hex');
+          u[0].updated_at = moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ');
+          u[0].enabled = true;
+          u[0].save(function (err) {
+            if (err) {
+              log('Ошибка при активации существующего в базе приложения');
+              log(err);
+              res.send(err, 500);
+            } else {
+              log('Приложение успешно установлено в insales');
+              log(u[0]);
+              res.send(200);
+            }
+          });
+        }
+      }
+    });
+  } else {
+    log('Переданы не все параметры для установки');
+    res.send('Ошибка установки приложения', 403);
+  }
+});
+
 module.exports = router;
 
 //Схема базы данных
