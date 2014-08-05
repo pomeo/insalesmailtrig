@@ -58,10 +58,6 @@ var User = db.define('users', {
 function log(logMsg) {
   if (logMsg instanceof Error) logger.error(logMsg.stack);
   if (debugOn) {
-    if (typeof logMsg == 'object') {
-      console.dir(logMsg);
-    } else {
       logger.info(logMsg);
-    }
   }
 };
