@@ -85,6 +85,35 @@ router.get('/install', function(req, res) {
   }
 });
 
+// Сюда приходит запрос на удаления приложения из insales
+router.get('/uninstall', function(req, res) {
+  if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
+    User.find({ insalesid: req.query.insales_id }, function (err, u) {
+      if (u[0].token == req.query.token) {
+        u[0].updated_at = moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ');
+        u[0].enabled = true;
+        u[0].save(function (err) {
+          if (err) {
+            log('Ошибка удаления приложения. Проблема сохранения изменений в базу данных');
+            log(err);
+            res.send(err, 500);
+          } else {
+            log('Приложение успешно удалено из insales');
+            log(u[0]);
+            res.send(200);
+          }
+        });
+      } else {
+        log('Ошибка удаления приложения. Неправильный token.');
+        res.send('Ошибка удаления приложения', 403);
+      }
+    });
+  } else {
+    log('Переданы не все параметры для удаления');
+    res.send('Ошибка удаления приложения', 403);
+  }
+});
+
 module.exports = router;
 
 //Схема базы данных
