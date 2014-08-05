@@ -54,6 +54,10 @@ var User = db.define('users', {
   enabled      : { type: 'boolean' }
 });
 
+User.sync(function (err) {
+    !err && log('Синхронизация схемы базы данных');
+});
+
 //Логгер в одном месте, для упрощения перезда на любой логгер.
 function log(logMsg) {
   if (logMsg instanceof Error) logger.error(logMsg.stack);
