@@ -17,7 +17,7 @@ var express    = require('express'),
     }),
     debugOn    = true;
 
-db.on("connect", function (err) {
+db.on('connect', function (err) {
   if (err) {
     log('Ошибка соединения с mysql: ', err);
     return;
