@@ -4,6 +4,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     stylus = require('gulp-stylus'),
     prefix = require('gulp-autoprefixer'),
+    minifyCSS = require('gulp-minify-css'),
     nib = require('nib'),
     watch = require('gulp-watch'),
     browserSync = require('browser-sync'),
@@ -31,6 +32,15 @@ gulp.task('compress', function() {
         }));
 });
 
+gulp.task('minify-css', function() {
+  gulp.src('src/css/**/*.css')
+  .pipe(watch(function(files) {
+          return files.pipe(minifyCSS())
+                 .pipe(gulp.dest('public/css'))
+                 .pipe(reload({stream:true}));
+        }));
+});
+
 gulp.task('stylus', function () {
   gulp.src('src/css/**/*.styl')
   .pipe(watch(function(files) {
@@ -49,6 +59,6 @@ gulp.task('browser-sync', function() {
   });
 });
 
-gulp.task('default', ['stylus', 'images', 'compress', 'browser-sync'], function () {
+gulp.task('default', ['minify-css', 'stylus', 'images', 'compress', 'browser-sync'], function () {
     gulp.watch(['views/**/*.jade'], reload);
 });
