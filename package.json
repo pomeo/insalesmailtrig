@@ -23,5 +23,16 @@
     "connect-mysql": "~2.1.1",
     "winston": "~0.7.3",
     "orm": "~2.1.18"
+  },
+  "devDependencies": {
+    "browser-sync": "^1.3.3",
+    "gulp": "^3.8.7",
+    "gulp-autoprefixer": "0.0.8",
+    "gulp-imagemin": "^0.6.2",
+    "gulp-stylus": "^1.3.0",
+    "gulp-uglify": "^0.3.1",
+    "gulp-watch": "^0.6.9",
+    "imagemin-pngcrush": "^0.1.0",
+    "nib": "^1.0.3"
   }
 }
