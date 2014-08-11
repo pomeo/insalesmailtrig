@@ -42,9 +42,11 @@ gulp.task('stylus', function () {
 });
 
 gulp.task('browser-sync', function() {
-    browserSync.init(null, {
-        proxy: 'localhost:3000'
-    });
+  browserSync.init(null, {
+    proxy: 'localhost:3000',
+    browser: ['google-chrome'],
+    notify: false
+  });
 });
 
 gulp.task('default', ['stylus', 'images', 'compress', 'browser-sync'], function () {
