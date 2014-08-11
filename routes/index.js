@@ -30,6 +30,10 @@ router.get('/', function(req, res) {
   res.render('index', { title: '' });
 });
 
+router.get('/dashboard', function(req, res) {
+  res.render('dashboard', { title: '' });
+});
+
 // Сюда приходит запрос от insales на установку приложения
 router.get('/install', function(req, res) {
   if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
