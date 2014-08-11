@@ -31,11 +31,15 @@ router.get('/', function(req, res) {
 });
 
 router.get('/dashboard', function(req, res) {
-  res.render('dashboard', { title: '' });
+  Apps.findOne({token:req.query.token}, function(err, a) {
+    res.render('dashboard', { title: '' });
+  });
 });
 
 router.get('/registration', function(req, res) {
-  res.render('registration', { title: '' });
+  Apps.findOne({token:req.query.token}, function(err, a) {
+    res.render('registration', { title: '' });
+  });
 });
 
 // Сюда приходит запрос от insales на установку приложения
