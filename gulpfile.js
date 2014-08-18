@@ -55,6 +55,7 @@ gulp.task('browser-sync', function() {
   browserSync.init(null, {
     proxy: 'localhost:3000',
     browser: ['firefox'],
+    port: 8080,
     notify: false
   });
 });
