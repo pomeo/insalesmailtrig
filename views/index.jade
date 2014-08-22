@@ -3,17 +3,9 @@ extends layout
 block content
   header
     a(href="http://mailtrig.ru", class="b-logo", target="_blank") Mailtrig
-    nav
-      ul
-        li
-          a(href="#", target="_blank") В магазин
-        li
-          a(href="http://mailtrig.ru", target="_blank") O MailTrig
-        li
-          a(href="http://mailtrig.ru/signin", target="_blank") Личный кабинет
   section
     div.b-yes-or-no
       p.b-annot.b-annot-left Есть ли<br />у Вас<br />аккаунт<br />в MailTrig?
-      a.b-button-yes-or-no.b-yes(href="#") ДА
-      a.b-button-yes-or-no.b-no(href="#") НЕТ
+      a.b-button-yes-or-no.b-yes(href="/login") ДА
+      a.b-button-yes-or-no.b-no(href="/registration") НЕТ
       i.b-arrow.b-arrow-left
