@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  header
+    a(href="http://mailtrig.ru", class="b-logo", target="_blank") Mailtrig
+  section
+    div.b-remember
+      form#remember(action="/remember", method="post")
+        fieldset
+          div.b-remember-l
+            input.b-remember-i(type="text", name="email")
+          input.b-button-remember(type="submit", value="Вспомнить пароль")
+      p.b-annot.b-annot-left Введите<br />Ваш<br />e-mail
+      i.b-arrow.b-arrow-left
