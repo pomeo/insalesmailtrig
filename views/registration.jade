@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  header
+    a(href="http://mailtrig.ru", class="b-logo", target="_blank") Mailtrig
+    nav
+      ul
+        li
+          a(href="#", target="_blank") В магазин
+        li
+          a(href="http://mailtrig.ru", target="_blank") O MailTrig
+        li
+          a(href="http://mailtrig.ru/signin", target="_blank") Личный кабинет
+  section
+    div.b-registration
+      form#reg.b-reg(action="/registration", method="post")
+        fieldset
+          div.b-reg-l
+            p.b-reg-i.i-home Название магазина
+            input.b-reg-input(type="text", name="shop")
+          div.b-reg-l
+            p.b-reg-i.i-man ФИО администратора магазина
+            input.b-reg-input(type="text", name="fio")
+          div.b-reg-l
+            p.b-reg-i.i-phone Телефон администратора магазина
+            input.b-reg-input(type="text", name="phone")
+          div.b-reg-l
+            p.b-reg-i.i-email E-mail администратора магазина
+            input.b-reg-input(type="text", name="email")
+          a#partner.b-reg-p(href="#") Есть код партнера для скидки?
+          div.b-reg-l.b-partner
+            p.b-reg-i.i-heart Введите код партнёра
+            input.b-reg-input(type="text", name="partner")
+          input.b-reg-submit(type="submit", value="Зарегистрироваться")
+      i.b-arrow.b-arrow-left
+      p.b-annot.b-annot-left Реги<br />стра<br />ция
