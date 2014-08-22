@@ -30,16 +30,40 @@ router.get('/', function(req, res) {
   res.render('index', { title: '' });
 });
 
-router.get('/dashboard', function(req, res) {
-  Apps.findOne({token:req.query.token}, function(err, a) {
-    res.render('dashboard', { title: '' });
-  });
+router.get('/registration', function(req, res) {
+  res.render('registration', { title: '' });
 });
 
-router.get('/registration', function(req, res) {
-  Apps.findOne({token:req.query.token}, function(err, a) {
-    res.render('registration', { title: '' });
-  });
+router.post('/registration', function(req, res) {
+  res.send('success');
+});
+
+router.get('/login', function(req, res) {
+  res.render('login', { title: '' });
+});
+
+router.post('/login', function(req, res) {
+  res.send(200);
+});
+
+router.get('/remember', function(req, res) {
+  res.render('remember', { title: '' });
+});
+
+router.post('/remember', function(req, res) {
+  res.send('success');
+});
+
+router.get('/service', function(req, res) {
+  res.send('off');
+});
+
+router.get('/dashboard', function(req, res) {
+  res.render('dashboard', { title: '' });
+});
+
+router.post('/dashboard', function(req, res) {
+  res.send(200);
 });
 
 // Сюда приходит запрос от insales на установку приложения
