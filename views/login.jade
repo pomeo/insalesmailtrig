@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  header
+    a(href="http://mailtrig.ru", class="b-logo", target="_blank") Mailtrig
+  section
+    div.b-login
+      form#login(action="/login", method="post")
+        fieldset
+          div.b-login-l
+            input.b-login-i(type="text", name="login")
+          div.b-login-l.i-lock
+            input.b-login-i(type="text", name="pass")
+          input.b-button-login(type="submit", value="ВОЙТИ")
+      a.b-link-remember(href="/remember") Забыли свой пароль?
+      p.b-annot.b-annot-left Может<br />войдём?
+      i.b-arrow.b-arrow-left
