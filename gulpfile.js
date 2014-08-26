@@ -15,7 +15,9 @@ var gulp = require('gulp'),
 gulp.task('images', function () {
   watch({glob: 'src/img/**/*'},
         function(files) {
-          files.pipe(imagemin({
+          files
+          .pipe(plumber())
+          .pipe(imagemin({
             progressive: true,
             svgoPlugins: [{removeViewBox: false}],
             use: [pngcrush()]
@@ -28,7 +30,19 @@ gulp.task('images', function () {
 gulp.task('compress', function() {
   watch({glob: 'src/js/**/*.js'},
         function(files) {
-          files.pipe(uglify())
+          files
+          .pipe(plumber())
+          .pipe(uglify())
+          .pipe(gulp.dest('public/js'))
+          .pipe(reload({stream:true}));
+        });
+});
+
+gulp.task('copy-json', function() {
+  watch({glob: 'src/js/**/*.json'},
+        function(files) {
+          files
+          .pipe(plumber())
           .pipe(gulp.dest('public/js'))
           .pipe(reload({stream:true}));
         });
@@ -37,7 +51,9 @@ gulp.task('compress', function() {
 gulp.task('minify-css', function() {
   watch({glob: 'src/css/**/*.css'},
         function(files) {
-          files.pipe(minifyCSS())
+          files
+          .pipe(plumber())
+          .pipe(minifyCSS())
           .pipe(gulp.dest('public/css'))
           .pipe(reload({stream:true}));
         });
@@ -46,7 +62,9 @@ gulp.task('minify-css', function() {
 gulp.task('stylus', function () {
   watch({glob: 'src/css/**/*.styl'},
         function(files) {
-          files.pipe(stylus({compress: true, use: nib()}))
+          files
+          .pipe(plumber())
+          .pipe(stylus({compress: true, use: nib()}))
           .pipe(prefix())
           .pipe(gulp.dest('public/css'))
           .pipe(reload({stream:true}));
@@ -62,6 +80,6 @@ gulp.task('browser-sync', function() {
   });
 });
 
-gulp.task('default', ['minify-css', 'stylus', 'images', 'compress', 'browser-sync'], function () {
+gulp.task('default', ['minify-css', 'stylus', 'images', 'compress', 'copy-json', 'browser-sync'], function () {
     gulp.watch(['views/**/*.jade'], reload);
 });
