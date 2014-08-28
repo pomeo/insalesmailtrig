@@ -9,6 +9,7 @@ var express    = require('express'),
     moment     = require('moment'),
     hat        = require('hat'),
     winston    = require('winston'),
+    cc         = require('coupon-code'),
     logger     = new (winston.Logger)({
       transports: [
         new (winston.transports.Console)(),
