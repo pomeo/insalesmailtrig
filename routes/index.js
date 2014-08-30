@@ -153,6 +153,24 @@ router.get('/uninstall', function(req, res) {
 
 module.exports = router;
 
+var generatePass = function() {
+  var set = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
+  var pass = '';
+  for (var i = 0; i < 10; i++) {
+    var p = Math.floor(Math.random() * set.length);
+    pass += set[p];
+  }
+  return pass;
+}
+
+var md5 = function(str) {
+  return crypto.createHash('md5').update(str).digest('hex');
+}
+
+var appidANDusername = function(appid, username, callback) {
+  callback(md5(appid + username));
+}
+
 //Схема базы данных
 var User = db.define('users', {
   insalesid    : { type: 'integer', unique: true },
