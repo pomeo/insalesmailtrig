@@ -188,8 +188,8 @@ var User = db.define('users', {
   autologin    : { type: 'text' },
   webhook      : { type: 'boolean' },
   cookie       : { type: 'boolean' },
-  created_at   : { type: 'date' },
-  updated_at   : { type: 'date' },
+  created_at   : { type: 'date', time: true },
+  updated_at   : { type: 'date', time: true },
   enabled      : { type: 'boolean' }
 });
 
