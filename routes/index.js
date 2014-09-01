@@ -20,7 +20,7 @@ var express    = require('express'),
 
 db.on('connect', function (err) {
   if (err) {
-    log('Ошибка соединения с mysql: ', err);
+    log('Ошибка соединения с mysql: ' + err, 'error');
     return;
   } else {
     log('Успешное подключение к mysql');
@@ -104,8 +104,8 @@ router.get('/install', function(req, res) {
           u[0].enabled = true;
           u[0].save(function (err) {
             if (err) {
-              log('Ошибка при активации существующего в базе приложения');
-              log(err);
+              log('Ошибка при активации существующего в базе приложения', 'error');
+              log(err, 'error');
               res.send(err, 500);
             } else {
               log('Приложение успешно установлено в insales');
@@ -117,7 +117,7 @@ router.get('/install', function(req, res) {
       }
     });
   } else {
-    log('Переданы не все параметры для установки');
+    log('Переданы не все параметры для установки', 'error');
     res.send('Ошибка установки приложения', 403);
   }
 });
@@ -131,8 +131,8 @@ router.get('/uninstall', function(req, res) {
         u[0].enabled = true;
         u[0].save(function (err) {
           if (err) {
-            log('Ошибка удаления приложения. Проблема сохранения изменений в базу данных');
-            log(err);
+            log('Ошибка удаления приложения. Проблема сохранения изменений в базу данных', 'error');
+            log(err, 'error');
             res.send(err, 500);
           } else {
             log('Приложение успешно удалено из insales');
@@ -141,12 +141,12 @@ router.get('/uninstall', function(req, res) {
           }
         });
       } else {
-        log('Ошибка удаления приложения. Неправильный token.');
+        log('Ошибка удаления приложения. Неправильный token.', 'error');
         res.send('Ошибка удаления приложения', 403);
       }
     });
   } else {
-    log('Переданы не все параметры для удаления');
+    log('Переданы не все параметры для удаления', 'error');
     res.send('Ошибка удаления приложения', 403);
   }
 });
