@@ -80,8 +80,8 @@ router.get('/install', function(req, res) {
           jstagid_main : 0,
           jstagid_var  : 0,
           cookie       : false,
-          created_at   : moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ'),
-          updated_at   : moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ'),
+          created_at   : moment().utc().toString(),
+          updated_at   : moment().utc().toString(),
           webhook      : false,
           enabled      : true
         }], function (err, app) {
@@ -100,7 +100,7 @@ router.get('/install', function(req, res) {
           res.send('Приложение уже установленно', 403);
         } else {
           u[0].token = crypto.createHash('md5').update(req.query.token + process.env.insalessecret).digest('hex');
-          u[0].updated_at = moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ');
+          u[0].updated_at = moment().utc().toString();
           u[0].enabled = true;
           u[0].save(function (err) {
             if (err) {
@@ -127,7 +127,7 @@ router.get('/uninstall', function(req, res) {
   if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
     User.find({ insalesid: req.query.insales_id }, function (err, u) {
       if (u[0].token == req.query.token) {
-        u[0].updated_at = moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ');
+        u[0].updated_at = moment().utc().toString();
         u[0].enabled = true;
         u[0].save(function (err) {
           if (err) {
