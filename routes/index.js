@@ -127,6 +127,7 @@ router.get('/uninstall', function(req, res) {
   if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
     User.find({ insalesid: req.query.insales_id }, function (err, u) {
       if (u[0].token == req.query.token) {
+        u[0].token = '';
         u[0].updated_at = moment().utc().toString();
         u[0].enabled = true;
         u[0].save(function (err) {
