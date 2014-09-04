@@ -129,7 +129,7 @@ router.get('/uninstall', function(req, res) {
       if (u[0].token == req.query.token) {
         u[0].token = '';
         u[0].updated_at = moment().utc().toString();
-        u[0].enabled = true;
+        u[0].enabled = false;
         u[0].save(function (err) {
           if (err) {
             log('Ошибка удаления приложения. Проблема сохранения изменений в базу данных', 'error');
