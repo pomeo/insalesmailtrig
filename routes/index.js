@@ -174,24 +174,25 @@ var appidANDusername = function(appid, username, callback) {
 
 //Схема базы данных
 var User = db.define('users', {
-  insalesid    : { type: 'integer', unique: true },
-  insalesurl   : { type: 'text' },
-  token        : { type: 'text' },
-  mailtrig     : { type: 'boolean' },
-  appid        : { type: 'integer' },
-  nameshop     : { type: 'text' },
-  nameadmin    : { type: 'text' },
-  phone        : { type: 'integer' },
-  email        : { type: 'text' },
-  username     : { type: 'text' },
-  jstagid_main : { type: 'integer' },
-  jstagid_var  : { type: 'integer' },
-  autologin    : { type: 'text' },
-  webhook      : { type: 'boolean' },
-  cookie       : { type: 'boolean' },
-  created_at   : { type: 'date', time: true },
-  updated_at   : { type: 'date', time: true },
-  enabled      : { type: 'boolean' }
+  insalesid          : { type: 'integer', unique: true },
+  insalesurl         : { type: 'text' },
+  insalesautologin   : { type: 'text' },
+  token              : { type: 'text' },
+  mailtrig           : { type: 'boolean' },
+  appid              : { type: 'integer' },
+  nameshop           : { type: 'text' },
+  nameadmin          : { type: 'text' },
+  phone              : { type: 'integer' },
+  email              : { type: 'text' },
+  username           : { type: 'text' },
+  jstagid_main       : { type: 'integer' },
+  jstagid_var        : { type: 'integer' },
+  autologin          : { type: 'text' },
+  webhook            : { type: 'boolean' },
+  cookie             : { type: 'boolean' },
+  created_at         : { type: 'date', time: true },
+  updated_at         : { type: 'date', time: true },
+  enabled            : { type: 'boolean' }
 });
 
 User.sync(function (err) {
