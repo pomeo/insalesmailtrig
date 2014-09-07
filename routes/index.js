@@ -79,7 +79,12 @@ router.get('/', function(req, res) {
 });
 
 router.get('/registration', function(req, res) {
-  res.render('registration', { title: '' });
+  if (req.session.insalesid) {
+    res.render('registration', { title: '' });
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 router.post('/registration', function(req, res) {
@@ -87,7 +92,12 @@ router.post('/registration', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-  res.render('login', { title: '' });
+  if (req.session.insalesid) {
+    res.render('login', { title: '' });
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 router.post('/login', function(req, res) {
@@ -95,23 +105,48 @@ router.post('/login', function(req, res) {
 });
 
 router.get('/remember', function(req, res) {
-  res.render('remember', { title: '' });
+  if (req.session.insalesid) {
+    res.render('remember', { title: '' });
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 router.post('/remember', function(req, res) {
-  res.send('success');
+  if (req.session.insalesid) {
+    res.send('success');
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 router.get('/service', function(req, res) {
-  res.send('off');
+  if (req.session.insalesid) {
+    res.send('off');
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 router.get('/dashboard', function(req, res) {
-  res.render('dashboard', { title: '' });
+  if (req.session.insalesid) {
+    res.render('dashboard', { title: '' });
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 router.post('/dashboard', function(req, res) {
-  res.send(200);
+  if (req.session.insalesid) {
+    res.send(200);
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 // Сюда приходит запрос от insales на установку приложения
