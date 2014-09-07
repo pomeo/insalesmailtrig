@@ -260,25 +260,25 @@ var appidANDusername = function(appid, username, callback) {
 
 //Схема базы данных
 var User = db.define('users', {
-  insalesid          : { type: 'integer', unique: true },
-  insalesurl         : { type: 'text' },
-  insalesautologin   : { type: 'text' },
-  token              : { type: 'text' },
-  mailtrig           : { type: 'boolean' },
-  appid              : { type: 'integer' },
-  nameshop           : { type: 'text' },
-  nameadmin          : { type: 'text' },
-  phone              : { type: 'integer' },
-  email              : { type: 'text' },
-  username           : { type: 'text' },
-  jstagid_main       : { type: 'integer' },
-  jstagid_var        : { type: 'integer' },
-  autologin          : { type: 'text' },
-  webhook            : { type: 'boolean' },
-  cookie             : { type: 'boolean' },
-  created_at         : { type: 'date', time: true },
-  updated_at         : { type: 'date', time: true },
-  enabled            : { type: 'boolean' }
+  insalesid          : { type: 'integer', unique: true }, //ID магазина в InSales
+  insalesurl         : { type: 'text' }, //Домен магазина
+  insalesautologin   : { type: 'text' }, //Token автологина insales
+  token              : { type: 'text' }, //Token для работы с API InSales
+  mailtrig           : { type: 'boolean' }, //Флаг указывающий, что пользователь (администратор магазина) зарегистрирован в системе MailTrig
+  appid              : { type: 'integer' }, //AppId в системе «MailTrig»
+  nameshop           : { type: 'text' }, //Название магазина
+  nameadmin          : { type: 'text' }, //Имя администратора магазина
+  phone              : { type: 'integer' }, //Телефон администратора магазина
+  email              : { type: 'text' }, //E-Mail администратора магазина
+  username           : { type: 'text' }, //Username в системе MailTrig (email-пользователя)
+  jstagid_main       : { type: 'integer' }, //id обработчика событий (если 0, то обработчик не установлен, либо удален)
+  jstagid_var        : { type: 'integer' }, //id переменных обработчка (если 0, то обработчик не установлен, либо удален)
+  autologin          : { type: 'text' }, //MD5 Hash двух значения AppId и Username (используется для автологина в личном кабинете MailTrig)
+  webhook            : { type: 'boolean' }, //Флаг указывающий, что внешний обработчик установлен (при удалении приложения, webhook удаляется автоматически, соответственно флаг должен сбрасываться)
+  cookie             : { type: 'boolean' }, //Флаг указывающий, что cookie добавлена в настройки магазина (при установке, необходимо обязательно проверить её наличие, чтобы избежать дублирования)
+  created_at         : { type: 'date', time: true }, //Дата создания записи
+  updated_at         : { type: 'date', time: true }, //Дата обновляется при любых изменениях
+  enabled            : { type: 'boolean' } //Флаг указывающий что приложение установлено
 });
 
 User.sync(function (err) {
