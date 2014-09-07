@@ -259,6 +259,9 @@ router.get('/uninstall', function(req, res) {
     User.find({ insalesid: req.query.insales_id }, function (err, u) {
       if (u[0].token == req.query.token) {
         u[0].token = null;
+        u[0].mailtrig = false;
+        u[0].autologin = null;
+        u[0].appid = 0;
         u[0].updated_at = new Date();
         u[0].enabled = false;
         u[0].save(function (err) {
