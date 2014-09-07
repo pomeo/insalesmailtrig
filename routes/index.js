@@ -28,7 +28,54 @@ db.on('connect', function (err) {
 });
 
 router.get('/', function(req, res) {
-  res.render('index', { title: '' });
+  if (req.query.token && (req.query.token !== '')) {
+    User.find({ insalesautologin: req.query.token }, function(err, a) {
+      if (err) {
+        log('Ошибка запроса данных из базы данных', 'error');
+        res.send(err, 500);
+      } else {
+        var errid = cc.generate({ parts : 1, partLen : 6 });
+        if (a[0]) {
+          req.session.insalesid = a[0].insalesid;
+          res.redirect('/');
+        } else {
+          log('#' + errid + ' Ошибка автологина, token не соотвествует', 'error');
+          res.send('#' + errid + ' Ошибка автологина', 403);
+        }
+      }
+    });
+  } else {
+    var insid = req.session.insalesid || req.query.insales_id;
+    log('Попытка входа магазина: ' + insid);
+    if ((req.query.insales_id && (req.query.insales_id !== '')) || req.session.insalesid !== undefined) {
+      User.find({ insalesid: insid }, function(err, a) {
+        if (a[0].enabled == true) {
+          if (req.session.insalesid) {
+            res.render('dashboard', { title: '' });
+          } else {
+            log('Автологин в магазин ' + a[0].insalesurl);
+            var id = hat();
+            a[0].insalesautologin = crypto.createHash('md5').update(id + a[0].token).digest('hex');
+            a[0].save(function (err) {
+              if (err) {
+                log('Ошибка сохранения token для автологина в базу данных', 'error');
+                res.send(err, 500);
+              } else {
+                log('Редирект в insales для автологина магазина ' + a[0].insalesurl)
+                res.redirect('http://' + a[0].insalesurl + '/admin/applications/' + process.env.insalesid + '/login?token=' + id + '&login=http://' + process.env.mailtrigurl);
+              }
+            });
+          }
+        } else {
+          log('Приложение не установлено в магазине ' + req.query.shop, 'warn');
+          res.send('Приложение не установлено для данного магазина', 403);
+        }
+      });
+    } else {
+      log('Ошибка при автологине, не хватает данных в строке запроса к приложению', 'warn')
+      res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+    }
+  }
 });
 
 router.get('/registration', function(req, res) {
