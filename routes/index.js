@@ -173,7 +173,7 @@ router.get('/install', function(req, res) {
         }], function (err, app) {
               if (err) {
                 log('Ошибка установки приложения в insales');
-                log(err);
+                log(err, 'error');
                 res.send(err, 500);
               } else {
                 log('Приложение успешно установлено в insales');
