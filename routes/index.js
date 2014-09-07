@@ -46,12 +46,16 @@ router.get('/', function(req, res) {
     });
   } else {
     var insid = req.session.insalesid || req.query.insales_id;
-    log('Попытка входа магазина: ' + insid);
+    log('Вход в магазин: ' + insid);
     if ((req.query.insales_id && (req.query.insales_id !== '')) || req.session.insalesid !== undefined) {
       User.find({ insalesid: insid }, function(err, a) {
         if (a[0].enabled == true) {
           if (req.session.insalesid) {
-            res.render('dashboard', { title: '' });
+            if (a[0].appid) {
+              res.render('dashboard', { title: '' });
+            } else {
+              res.render('index', { title: '' });
+            }
           } else {
             log('Автологин в магазин ' + a[0].insalesurl);
             var id = hat();
