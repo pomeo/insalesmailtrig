@@ -6,11 +6,11 @@ block content
     nav
       ul
         li
-          a(href="#", target="_blank") В магазин
+          a(href="http://#{user.insalesurl}", target="_blank") В магазин
         li
-          a(href="http://mailtrig.ru", target="_blank") O MailTrig
+          a(href="http://mailtrig.ru/service.php", target="_blank") O MailTrig
         li
-          a(href="http://mailtrig.ru/signin", target="_blank") Личный кабинет
+          a(href="http://app.mailtrig.ru/wizard.php?new&autologin=#{user.autologin}", target="_blank") Личный кабинет
   section
     div.b-dashboard
       p.b-annot.b-annot-right СЕРВИС
@@ -19,10 +19,17 @@ block content
         p.b-text-on ВКЛЮЧЕН
         p.b-text-off ВЫКЛЮЧЕН
       i.b-arrow.b-arrow-right
-      h2.b-name Название магазина
-      p.b-name-mag &#132;Ромашка&#147;
-      h2.b-adm Администратор магазина
-      p.b-adm-name Иванов Сергей Иванович
-      p.b-adm-phone +7 (900) 800 00 00
-      p.b-adm-email e-mail@e-mail.ru
-      p.b-app.b-app-off Приложение установлено
+      if user.nameshop
+        h2.b-name Название магазина
+        p.b-name-mag &#132;#{user.nameshop}&#147;
+      if user.nameadmin
+        h2.b-adm Администратор магазина
+        p.b-adm-name #{user.nameadmin}
+      if user.phone
+        p.b-adm-phone #{user.phone}
+      if user.email
+        p.b-adm-email #{user.email}
+      if user.cookie && user.webhook && jstagid_main !== 0 && jstagid_var !== 0
+        p.b-app.b-app-on Приложение установлено
+      else
+        p.b-app.b-app-off Приложение установлено
