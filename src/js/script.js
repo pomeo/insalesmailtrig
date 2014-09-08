@@ -126,6 +126,39 @@ $(document).ready(function() {
         success: function (response) {
           if (response == 'success') {
             window.location.replace('/dashboard');
+          } else if (response == 'nouser') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Отсутствует логин');
+              }
+            });
+          } else if (response == 'nopass') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Неправильный пароль');
+              }
+            });
+          } else {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Ошибка номер #' + response);
+              }
+            });
           }
         }
       });
