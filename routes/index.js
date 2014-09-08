@@ -110,8 +110,8 @@ router.post('/login', function(req, res) {
       data: {
         // 'mt_partner': '',
         // 'mt_api_url': '',
-        'username': req.query.login,
-        'password': req.query.pass
+        'username': req.param('login'),
+        'password': req.param('pass')
       },
       headers: {'Content-Type': 'application/json'}
     }).once('complete', function(o) {
