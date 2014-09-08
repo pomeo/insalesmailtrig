@@ -144,17 +144,8 @@ router.post('/login', function(req, res) {
             }
           });
         } else {
-          if (appId.error) {
-            if (appId.error_message == 'No such user.') {
-              log('Отсутствует пользователь со стороны mailtrig, ' + req.param('login') + ' ' + JSON.stringify(o), 'warn');
-              res.send('nouser');
-            } else if (appId.error_message == 'Wrong password.') {
-              log('Неправильный пароль ' + req.param('login') + ' ' + JSON.stringify(o), 'warn');
-              res.send('nopass');
-            } else {
-              log('#' + errid + ' Ошибка в ответе от mailtrig на запрос appId: ' + JSON.stringify(o), 'warn');
-              res.send(errid);
-            }
+          if ((appId.error == '401')||(appId.error == '402')||(appId.error == '403')||(appId.error == '404')||(appId.error == '405')||(appId.error == '406')||(appId.error == '407')) {
+            res.send(appId.error);
           } else {
             log('#' + errid + ' Ошибка в ответе от mailtrig на запрос appId: ' + JSON.stringify(o), 'warn');
             res.send(errid);
