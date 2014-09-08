@@ -52,7 +52,7 @@ router.get('/', function(req, res) {
         if (a[0].enabled == true) {
           if (req.session.insalesid) {
             if (a[0].appid) {
-              res.render('dashboard', { title: '' });
+              res.render('dashboard', { title: '', user: a[0] });
             } else {
               res.render('index', { title: '' });
             }
