@@ -127,8 +127,10 @@ router.post('/login', function(req, res) {
               log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
               res.send(errid);
             } else {
-              u[0].autologin = crypto.createHash('md5').update(appId.data.appId + req.query.login).digest('hex');
+              var p = crypto.createHash('md5').update(req.param('pass')).digest('hex');
+              u[0].autologin = crypto.createHash('md5').update(req.param('login') + p).digest('hex');
               u[0].mailtrig = true;
+              u[0].email = req.param('login');
               u[0].appid = appId.data.appId;
               u[0].updated_at = new Date();
               u[0].save(function (e) {
