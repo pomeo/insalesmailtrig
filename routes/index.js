@@ -197,7 +197,19 @@ router.get('/service', function(req, res) {
 
 router.get('/dashboard', function(req, res) {
   if (req.session.insalesid) {
-    res.render('dashboard', { title: '' });
+    User.find({ insalesid: req.session.insalesid }, function (err, u) {
+      if (err) {
+        log('Ошибка при запросе данных из базы данных', 'error');
+        res.send(err, 500);
+      } else {
+        if (u[0].appid) {
+          log('При открытии /dashboard не найдена запись о пользователе в базе', 'error');
+          res.redirect('/');
+        } else {
+          res.render('dashboard', { title: '', user: u[0] });
+        }
+      }
+    });
   } else {
     log('Попытка обращения с отсутствием сессии', 'warn');
     res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
