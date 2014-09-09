@@ -107,7 +107,64 @@ router.get('/registration', function(req, res) {
 });
 
 router.post('/registration', function(req, res) {
-  res.send('success');
+  if (req.session.insalesid) {
+    var pass = generatePass();
+    var p = crypto.createHash('md5').update(pass).digest('hex');
+    rest.post('http://app.mailtrig.ru/api/?method=reg_user', {
+      data: {
+        'mt_partner': req.param('partner'),
+        // 'mt_api_url': '',
+        // 'mt_integration': '',
+        'email': req.param('email'),
+        'password': pass
+      },
+      headers: {'Content-Type': 'application/json'}
+    }).once('complete', function(o) {
+      var errid = cc.generate({ parts : 1, partLen : 6 });
+      if (o.errors) {
+        log('Ошибка во время регистрации нового пользователя: ' + JSON.stringify(o), 'error');
+        res.send('Произошла ошибка', 500);
+      } else {
+        var appId = JSON.parse(o);
+        if (appId.status == 200) {
+          User.find({ insalesid: req.session.insalesid }, function (err, u) {
+            if (err) {
+              log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
+              res.send(errid);
+            } else {
+              u[0].autologin = crypto.createHash('md5').update(req.param('email') + p).digest('hex');
+              u[0].mailtrig = true;
+              u[0].nameshop = req.param('shop');
+              u[0].nameadmin = req.param('fio');
+              u[0].phone = req.param('phone');
+              u[0].email = req.param('email');
+              u[0].appid = appId.data.appId;
+              u[0].updated_at = new Date();
+              u[0].save(function (e) {
+                if (e) {
+                  log('#' + errid + ' Произошла ошибка сохранения в базу данных' + JSON.stringify(e), 'error');
+                  res.send(errid);
+                } else {
+                  res.send('success');
+                }
+              });
+            }
+          });
+        } else {
+          if ((appId.error == '401')||(appId.error == '402')||(appId.error == '403')||(appId.error == '404')||(appId.error == '405')||(appId.error == '406')||(appId.error == '407')) {
+            log('Ошибка в ответе от mailtrig ' + JSON.stringify(appId), 'error');
+            res.send(appId.error);
+          } else {
+            log('#' + errid + ' Ошибка в ответе от mailtrig на запрос регистрации: ' + JSON.stringify(o), 'warn');
+            res.send(errid);
+          }
+        }
+      }
+    })
+  } else {
+    log('Попытка обращения с отсутствием сессии', 'warn');
+    res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
+  }
 });
 
 router.get('/login', function(req, res) {
