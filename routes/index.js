@@ -199,24 +199,35 @@ router.post('/login', function(req, res) {
               log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
               res.send(errid);
             } else {
-              var p = crypto.createHash('md5').update(req.param('pass')).digest('hex');
-              u[0].autologin = crypto.createHash('md5').update(req.param('login') + p).digest('hex');
-              u[0].mailtrig = true;
-              u[0].email = req.param('login');
-              u[0].appid = appId.data.appId;
-              u[0].updated_at = new Date();
-              u[0].save(function (e) {
-                if (e) {
-                  log('#' + errid + ' Произошла ошибка сохранения в базу данных' + JSON.stringify(e), 'error');
+              rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/account.xml').once('complete', function(response) {
+                if (response.errors) {
+                  log('#' + errid + ' Ошибка во время запроса данных аккаунта из insales ' + JSON.stringify(response), 'error');
                   res.send(errid);
                 } else {
-                  res.send('success');
+                  var p = crypto.createHash('md5').update(req.param('pass')).digest('hex');
+                  u[0].autologin = crypto.createHash('md5').update(req.param('login') + p).digest('hex');
+                  u[0].mailtrig = true;
+                  u[0].nameshop = response.account.title[0];
+                  u[0].nameadmin = response.account.owner[0].name[0];
+                  u[0].phone = response.account.phone[0];
+                  u[0].email = req.param('login');
+                  u[0].appid = appId.data.appId;
+                  u[0].updated_at = new Date();
+                  u[0].save(function (e) {
+                    if (e) {
+                      log('#' + errid + ' Произошла ошибка сохранения в базу данных' + JSON.stringify(e), 'error');
+                      res.send(errid);
+                    } else {
+                      res.send('success');
+                    }
+                  });
                 }
               });
             }
           });
         } else {
           if ((appId.error == '401')||(appId.error == '402')||(appId.error == '403')||(appId.error == '404')||(appId.error == '405')||(appId.error == '406')||(appId.error == '407')) {
+            log('Ошибка в ответе от mailtrig ' + JSON.stringify(appId), 'error');
             res.send(appId.error);
           } else {
             log('#' + errid + ' Ошибка в ответе от mailtrig на запрос appId: ' + JSON.stringify(o), 'warn');
