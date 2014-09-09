@@ -84,7 +84,22 @@ router.get('/', function(req, res) {
 
 router.get('/registration', function(req, res) {
   if (req.session.insalesid) {
-    res.render('registration', { title: '' });
+    var errid = cc.generate({ parts : 1, partLen : 6 });
+    User.find({ insalesid: req.session.insalesid }, function (err, u) {
+      if (err) {
+        log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
+        res.send(errid);
+      } else {
+        rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/account.xml').once('complete', function(response) {
+          if (response.errors) {
+            log('#' + errid + ' Ошибка во время запроса данных аккаунта из insales ' + JSON.stringify(response), 'error');
+            res.send(errid);
+          } else {
+            res.render('registration', { title: '', user: response });
+          }
+        });
+      }
+    });
   } else {
     log('Попытка обращения с отсутствием сессии', 'warn');
     res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
