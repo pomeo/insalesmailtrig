@@ -37,8 +37,7 @@ $(document).ready(function() {
         required: true
       },
       phone: {
-        required: true,
-        number: true
+        required: true
       }
     },
     messages: {
