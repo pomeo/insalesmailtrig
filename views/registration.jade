@@ -17,16 +17,16 @@ block content
         fieldset
           div.b-reg-l
             p.b-reg-i.i-home Название магазина
-            input.b-reg-input(type="text", name="shop")
+            input.b-reg-input(type="text", name="shop", value="#{user.account.owner[0].name[0]}")
           div.b-reg-l
             p.b-reg-i.i-man ФИО администратора магазина
-            input.b-reg-input(type="text", name="fio")
+            input.b-reg-input(type="text", name="fio", value="#{user.account.title[0]}")
           div.b-reg-l
             p.b-reg-i.i-phone Телефон администратора магазина
-            input.b-reg-input(type="text", name="phone")
+            input.b-reg-input(type="text", name="phone", value="#{user.account.phone[0]}")
           div.b-reg-l
             p.b-reg-i.i-email E-mail администратора магазина
-            input.b-reg-input(type="text", name="email")
+            input.b-reg-input(type="text", name="email", value="#{user.account.email[0]}")
           a#partner.b-reg-p(href="#") Есть код партнера для скидки?
           div.b-reg-l.b-partner
             p.b-reg-i.i-heart Введите код партнёра
