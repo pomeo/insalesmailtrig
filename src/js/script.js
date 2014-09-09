@@ -2,7 +2,14 @@ $(document).ready(function() {
   $('#partner').click(function() {
     $('.b-partner').toggle('slow')
   })
-  $('body').on('change', '.b-reg-input', function(){
+  $('body').on('change', '.b-reg-input', function() {
+    if ($(this).val() !== '') {
+      $(this).css({opacity: 1});
+    } else if ($(this).val() == '') {
+      $(this).css({opacity: 0});
+    }
+  });
+  $('.b-reg-input').on('click', function() {
     if ($(this).val() !== '') {
       $(this).css({opacity: 1});
     } else if ($(this).val() == '') {
