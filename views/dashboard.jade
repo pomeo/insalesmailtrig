@@ -12,6 +12,7 @@ block content
         li
           a(href="http://app.mailtrig.ru/wizard.php?new&autologin=#{user.autologin}", target="_blank") Личный кабинет
   section
+    div#errorModal
     div.b-dashboard
       p.b-annot.b-annot-right СЕРВИС
       if user.cookie && user.webhook && user.jstagid_main !== 0 && user.jstagid_var !== 0
