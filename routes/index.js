@@ -170,7 +170,15 @@ router.post('/registration', function(req, res) {
 
 router.get('/login', function(req, res) {
   if (req.session.insalesid) {
-    res.render('login', { title: '' });
+    var errid = cc.generate({ parts : 1, partLen : 6 });
+    User.find({ insalesid: req.session.insalesid }, function (err, u) {
+      if (err) {
+        log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
+        res.send(errid);
+      } else {
+        res.render('login', { title: '', link: u[0] });
+      }
+    });
   } else {
     log('Попытка обращения с отсутствием сессии', 'warn');
     res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
