@@ -95,7 +95,7 @@ router.get('/registration', function(req, res) {
             log('#' + errid + ' Ошибка во время запроса данных аккаунта из insales ' + JSON.stringify(response), 'error');
             res.send(errid);
           } else {
-            res.render('registration', { title: '', user: response });
+            res.render('registration', { title: '', user: response, link: u[0] });
           }
         });
       }
