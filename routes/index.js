@@ -429,7 +429,7 @@ var User = db.define('users', {
   appid              : { type: 'integer' }, //AppId в системе MailTrig
   nameshop           : { type: 'text' }, //Название магазина
   nameadmin          : { type: 'text' }, //Имя администратора магазина
-  phone              : { type: 'integer' }, //Телефон администратора магазина
+  phone              : { type: 'text' }, //Телефон администратора магазина
   email              : { type: 'text' }, //E-Mail администратора магазина
   username           : { type: 'text' }, //Username в системе MailTrig (email-пользователя)
   jstagid_main       : { type: 'integer' }, //id обработчика событий (если 0, то обработчик не установлен, либо удален)
