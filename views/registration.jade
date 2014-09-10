@@ -15,10 +15,10 @@ block content
         fieldset
           div.b-reg-l
             p.b-reg-i.i-home Название магазина
-            input.b-reg-input(type="text", name="shop", value="#{user.account.owner[0].name[0]}")
+            input.b-reg-input(type="text", name="shop", value="#{user.account.title[0]}")
           div.b-reg-l
             p.b-reg-i.i-man ФИО администратора магазина
-            input.b-reg-input(type="text", name="fio", value="#{user.account.title[0]}")
+            input.b-reg-input(type="text", name="fio", value="#{user.account.owner[0].name[0]}")
           div.b-reg-l
             p.b-reg-i.i-phone Телефон администратора магазина
             input.b-reg-input(type="text", name="phone", value="#{user.account.phone[0]}")
