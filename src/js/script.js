@@ -303,6 +303,17 @@ $(document).ready(function() {
       } else if (response == 'off') {
         $('#turn').removeClass('b-turn-on').addClass('b-turn-off');
         $('.b-app').removeClass('b-app-on').addClass('b-app-off');
+      } else {
+        $('#errorModal').easyModal({
+          autoOpen: true,
+          overlayOpacity: 0.5,
+          overlayColor: '#666',
+          overlayClose: true,
+          closeOnEscape: true,
+          onOpen: function(myModal){
+            $(myModal).text('Ошибка номер #' + response);
+          }
+        });
       }
     });
   });
