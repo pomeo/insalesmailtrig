@@ -32,7 +32,7 @@ block content
         p.b-adm-phone #{user.phone}
       if user.email
         p.b-adm-email #{user.email}
-      if user.cookie && user.webhook && jstagid_main !== 0 && jstagid_var !== 0
+      if user.enabled !== 0
         p.b-app.b-app-on Приложение установлено
       else
         p.b-app.b-app-off Приложение установлено
