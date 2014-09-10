@@ -14,7 +14,7 @@ block content
   section
     div.b-dashboard
       p.b-annot.b-annot-right СЕРВИС
-      if user.cookie && user.webhook && jstagid_main !== 0 && jstagid_var !== 0
+      if user.cookie && user.webhook && user.jstagid_main !== 0 && user.jstagid_var !== 0
         div#turn.b-turn-on-or-off.b-turn-on
       else
         div#turn.b-turn-on-or-off.b-turn-off
