@@ -325,7 +325,7 @@ router.get('/install', function(req, res) {
           cookie       : false,
           created_at   : new Date(),
           updated_at   : new Date(),
-          webhook      : false,
+          webhook      : 0,
           enabled      : true
         }], function (err, app) {
               if (err) {
@@ -434,7 +434,7 @@ var User = db.define('users', {
   jstagid_main       : { type: 'integer' }, //id обработчика событий (если 0, то обработчик не установлен, либо удален)
   jstagid_var        : { type: 'integer' }, //id переменных обработчка (если 0, то обработчик не установлен, либо удален)
   autologin          : { type: 'text' }, //MD5 Hash двух значения AppId и Username (используется для автологина в личном кабинете MailTrig)
-  webhook            : { type: 'boolean' }, //Флаг указывающий, что внешний обработчик установлен (при удалении приложения, webhook удаляется автоматически, соответственно флаг должен сбрасываться)
+  webhook            : { type: 'integer' }, //Флаг указывающий, что внешний обработчик установлен (при удалении приложения, webhook удаляется автоматически, соответственно флаг должен сбрасываться)
   cookie             : { type: 'boolean' }, //Флаг указывающий, что cookie добавлена в настройки магазина (при установке, необходимо обязательно проверить её наличие, чтобы избежать дублирования)
   created_at         : { type: 'date', time: true }, //Дата создания записи
   updated_at         : { type: 'date', time: true }, //Дата обновляется при любых изменениях
