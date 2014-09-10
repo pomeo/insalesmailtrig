@@ -138,6 +138,7 @@ router.post('/registration', function(req, res) {
               u[0].nameadmin = req.param('fio');
               u[0].phone = req.param('phone');
               u[0].email = req.param('email');
+              u[0].username = req.param('email');
               u[0].appid = appId.data.appId;
               u[0].updated_at = new Date();
               u[0].save(function (e) {
@@ -210,7 +211,8 @@ router.post('/login', function(req, res) {
                   u[0].nameshop = response.account.title[0];
                   u[0].nameadmin = response.account.owner[0].name[0];
                   u[0].phone = response.account.phone[0];
-                  u[0].email = req.param('login');
+                  u[0].email = response.account.email[0];
+                  u[0].username = req.param('login');
                   u[0].appid = appId.data.appId;
                   u[0].updated_at = new Date();
                   u[0].save(function (e) {
