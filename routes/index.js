@@ -8,6 +8,7 @@ var express    = require('express'),
     db         = orm.connect('mysql://' + process.env.mysqluser + ':' + process.env.mysqlpass + '@' + process.env.mysqlhost + '/' + process.env.mysqldb),
     moment     = require('moment'),
     hat        = require('hat'),
+    async      = require('async'),
     winston    = require('winston'),
     cc         = require('coupon-code'),
     logger     = new (winston.Logger)({
