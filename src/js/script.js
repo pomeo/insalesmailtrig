@@ -299,10 +299,8 @@ $(document).ready(function() {
     .done(function(response) {
       if (response == 'on') {
         $('#turn').removeClass('b-turn-off').addClass('b-turn-on');
-        $('.b-app').removeClass('b-app-off').addClass('b-app-on');
       } else if (response == 'off') {
         $('#turn').removeClass('b-turn-on').addClass('b-turn-off');
-        $('.b-app').removeClass('b-app-on').addClass('b-app-off');
       } else {
         $('#errorModal').easyModal({
           autoOpen: true,
