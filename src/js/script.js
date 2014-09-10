@@ -64,6 +64,83 @@ $(document).ready(function() {
         success: function (response) {
           if (response == 'success') {
             window.location.replace('/dashboard');
+          } else if (response == '401') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Отсутствует логин');
+              }
+            });
+          } else if (response == '402') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Неправильный пароль');
+              }
+            });
+          } else if (response == '403') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Почта неправильного формата');
+              }
+            });
+          } else if (response == '404') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Пароль должен быть длиннее 6 символов');
+              }
+            });
+          } else if (response == '405') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Логин и пароль обязательны');
+              }
+            });
+          } else if (response == '406') {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Почта уже используется');
+              }
+            });
+          } else {
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Ошибка номер #' + response);
+              }
+            });
           }
         }
       });
