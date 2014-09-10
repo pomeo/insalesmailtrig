@@ -362,7 +362,7 @@ router.get('/uninstall', function(req, res) {
         u[0].token = null;
         u[0].mailtrig = false;
         u[0].autologin = null;
-        u[0].appid = 0;
+        u[0].appid = null;
         u[0].updated_at = new Date();
         u[0].enabled = false;
         u[0].save(function (err) {
