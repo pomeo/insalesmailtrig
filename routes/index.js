@@ -310,6 +310,10 @@ router.post('/dashboard', function(req, res) {
   }
 });
 
+router.post('/webhook', function(req, res) {
+  res.send(200);
+});
+
 // Сюда приходит запрос от insales на установку приложения
 router.get('/install', function(req, res) {
   if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
