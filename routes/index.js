@@ -311,7 +311,7 @@ router.post('/dashboard', function(req, res) {
 });
 
 router.post('/webhook', function(req, res) {
-  console.log(req.body);
+  console.log(JSON.stringify(req.body));
   res.send(200);
 });
 
