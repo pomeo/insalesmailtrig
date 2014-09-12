@@ -377,6 +377,7 @@ router.get('/uninstall', function(req, res) {
       if (u[0].token == req.query.token) {
         u[0].token = null;
         u[0].mailtrig = false;
+        u[0].cookie = false;
         u[0].autologin = null;
         u[0].appid = null;
         u[0].webhook = 0;
