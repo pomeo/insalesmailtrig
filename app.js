@@ -15,7 +15,8 @@ var express = require('express'),
     favicon = require('static-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    xmlparser = require('express-xml-bodyparser');
 
 var routes = require('./routes/index');
 
@@ -34,6 +35,7 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
+app.use(xmlparser());
 app.use(cookieParser());
 app.use(session({secret: process.env.SECRET, store: new MySQLStore(options)}))
 app.use(express.static(path.join(__dirname, 'public')));
