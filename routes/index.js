@@ -457,79 +457,83 @@ function service_uninstall(req, res, insales_id, u, errid) {
         res.send(errid);
       } else {
         log('Успешно отправлен список cookies в insales');
-        u[0].cookies = false;
+        u[0].cookie = false;
+        u[0].updated_at = new Date();
         u[0].save(function (err) {
           if (err) {
-            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+            log('#' + errid + ' Ошибка при сохранении флага наличия cookie в false в базу данных ' + JSON.stringify(err), 'error');
             res.send(errid);
           } else {
             log('Успешно удалено cookie');
             var webhooks = u[0].webhook.split(',');
-            if ((webhooks[0] !== 0) || (webhooks[0] !== undefined)) {
-              rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks/' + webhooks[0] + '.xml', {
+            if ((webhooks[0] !== 0) && (webhooks[0] !== undefined)) {
+              rest.del('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks/' + webhooks[0] + '.xml', {
                 headers: {'Content-Type': 'application/xml'}
               }).once('complete', function(o) {
-                if (o.errors) {
+                if (o !== null) {
                   log('#' + errid + ' Ошибка во время отправки запроса на удаление webhook ' + JSON.stringify(o), 'error');
                   res.send(errid);
                 } else {
                   log('Успешно удалён первый webhook');
-                  var wh = webhooks;
-                  var ind = wh.indexOf(webhooks[0]);
+                  var ind = webhooks.indexOf(webhooks[0]);
                   if (ind > -1) {
-                    wh.splice(ind, 1);
-                    u[0].webhook = wh;
+                    webhooks.splice(ind, 1);
+                    u[0].webhook = webhooks.toString();
                   } else {
                     u[0].webhook = 0;
                   }
+                  u[0].updated_at = new Date();
                   u[0].save(function (err) {
                     if (err) {
-                      log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                      log('#' + errid + ' Ошибка при сохранении флага установки webhookа создание заказа в базу данных ' + JSON.stringify(err), 'error');
                       res.send(errid);
                     } else {
-                      if ((webhooks[1] !== 0) || (webhooks[1] !== undefined)) {
-                        rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhook/' + webhooks[1] + '.xml', {
+                      if ((webhooks[0] !== 0) && (webhooks[0] !== undefined)) {
+                        rest.del('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks/' + webhooks[0] + '.xml', {
                           headers: {'Content-Type': 'application/xml'}
                         }).once('complete', function(o) {
-                          if (o.errors) {
+                          if (o !== null) {
                             log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
                             res.send(errid);
                           } else {
                             log('Успешно удалён второй webhook');
                             u[0].webhook = 0;
+                            u[0].updated_at = new Date();
                             u[0].save(function (err) {
                               if (err) {
-                                log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                log('#' + errid + ' Ошибка при сохранении флага установки webhookа обновление заказа в ноль в базу данных ' + JSON.stringify(err), 'error');
                                 res.send(errid);
                               } else {
                                 if (u[0].jstagid_var !== 0) {
-                                  rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_var + '.xml', {
+                                  rest.del('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_var + '.xml', {
                                     headers: {'Content-Type': 'application/xml'}
                                   }).once('complete', function(o) {
-                                    if (o.errors) {
+                                    if (o !== null) {
                                       log('#' + errid + ' Ошибка во время удаления js с переменными ' + JSON.stringify(o), 'error');
                                       res.send(errid);
                                     } else {
                                       log('Успешно удалён js с переменными');
                                       u[0].jstagid_var = 0;
+                                      u[0].updated_at = new Date();
                                       u[0].save(function (err) {
                                         if (err) {
-                                          log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                          log('#' + errid + ' Ошибка при сохранении флага установки js с переменными в ноль в базу данных ' + JSON.stringify(err), 'error');
                                           res.send(errid);
                                         } else {
                                           if (u[0].jstagid_main !== 0) {
-                                            rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_main + '.xml', {
+                                            rest.del('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_main + '.xml', {
                                               headers: {'Content-Type': 'application/xml'}
                                             }).once('complete', function(o) {
-                                              if (o.errors) {
+                                              if (o !== null) {
                                                 log('#' + errid + ' Ошибка во время удаления главного js ' + JSON.stringify(o), 'error');
                                                 res.send(errid);
                                               } else {
-                                                log('Успешно удалён главный js');
+                                                log('Успешно удалён основной js');
                                                 u[0].jstagid_main = 0;
+                                                u[0].updated_at = new Date();
                                                 u[0].save(function (err) {
                                                   if (err) {
-                                                    log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                                    log('#' + errid + ' Ошибка при сохранении флага установки основного js в ноль в базу данных ' + JSON.stringify(err), 'error');
                                                     res.send(errid);
                                                   } else {
                                                     log('Сервисы выключены');
@@ -599,14 +603,15 @@ function service_install(req, res, insales_id, u, errid) {
       } else {
         log('Успешно отправлен список cookies в insales');
         u[0].cookie = true;
+        u[0].updated_at = new Date();
         u[0].save(function (err) {
           if (err) {
-            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+            log('#' + errid + ' Ошибка при сохранении флага cookie в базу данных ' + JSON.stringify(err), 'error');
             res.send(errid);
           } else {
             var webhook1 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
                          + '<webhook>'
-                         + '<address>http://test4.sovechkin.com/webhook</address>'
+                         + '<address>http://' + process.env.webhook + '/webhook</address>'
                          + '<topic>orders/create</topic>'
                          + '</webhook>';
             rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
@@ -618,15 +623,18 @@ function service_install(req, res, insales_id, u, errid) {
                 res.send(errid);
               } else {
                 log('Успешно установлен webhook на создание заказа');
-                u[0].webhook = '2';
+                var w = [];
+                w.push(o['webhook']['id'][0]._);
+                u[0].webhook = w.toString();
+                u[0].updated_at = new Date();
                 u[0].save(function (err) {
                   if (err) {
-                    log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                    log('#' + errid + ' Ошибка при сохранении id вебхука создания заказа в базу данных ' + JSON.stringify(err), 'error');
                     res.send(errid);
                   } else {
                     var webhook2 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
                                  + '<webhook>'
-                                 + '<address>http://test4.sovechkin.com/webhook</address>'
+                                 + '<address>http://' + process.env.webhook + '/webhook</address>'
                                  + '<topic>orders/update</topic>'
                                  + '</webhook>';
                     rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
@@ -638,10 +646,12 @@ function service_install(req, res, insales_id, u, errid) {
                         res.send(errid);
                       } else {
                         log('Успешно установлен webhook на обновление заказа');
-                        u[0].webhook = '2,3';
+                        w.push(o['webhook']['id'][0]._);
+                        u[0].webhook = w.toString();
+                        u[0].updated_at = new Date();
                         u[0].save(function (err) {
                           if (err) {
-                            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                            log('#' + errid + ' Ошибка при сохранении id вебхука обновление заказа в базу данных ' + JSON.stringify(err), 'error');
                             res.send(errid);
                           } else {
                             var jstext = '<js-tag>'
@@ -656,11 +666,12 @@ function service_install(req, res, insales_id, u, errid) {
                                 log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
                                 res.send(errid);
                               } else {
-                                log('Успешно установлен webhook на обновление заказа');
-                                u[0].jstagid_var = '12345';
+                                log('Успешно установлен js с переменными');
+                                u[0].jstagid_var = o['text-tag']['id'][0]._;
+                                u[0].updated_at = new Date();
                                 u[0].save(function (err) {
                                   if (err) {
-                                    log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                    log('#' + errid + ' Ошибка при сохранении флага установки js с переменными в базу данных ' + JSON.stringify(err), 'error');
                                     res.send(errid);
                                   } else {
                                     var jsfile = '<js-tag>'
@@ -675,11 +686,12 @@ function service_install(req, res, insales_id, u, errid) {
                                         log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
                                         res.send(errid);
                                       } else {
-                                        log('Успешно установлен webhook на обновление заказа');
-                                        u[0].jstagid_main = '123';
+                                        log('Успешно установлен основной js');
+                                        u[0].jstagid_main = o['file-tag']['id'][0]._;
+                                        u[0].updated_at = new Date();
                                         u[0].save(function (err) {
                                           if (err) {
-                                            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                            log('#' + errid + ' Ошибка при сохранении флага установки основного js в базу данных ' + JSON.stringify(err), 'error');
                                             res.send(errid);
                                           } else {
                                             log('Сервисы включены');
