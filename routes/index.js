@@ -427,28 +427,183 @@ function service(req, res, insales_id) {
   var errid = cc.generate({ parts : 1, partLen : 6 });
   User.find({ insalesid: insales_id }, function (err, u) {
     if (u[0].cookie) {
-      rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
-        headers: {'Content-Type': 'application/xml'}
-      }).once('complete', function(c) {
-        var tr = 0;
-        var cookies = c.account['client-cookies-whitelist'][0].split('\r\n');
-        var index = cookies.indexOf('INSALES_MAILTRIG_CUSTOMER_ID');
-        if (index > -1) {
-          cookies.splice(index, 1);
-        }
-        var cooki   = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
-                    + '<account>'
-                    + '<client-cookies-whitelist>' + cookies.join('\r\n') + '</client-cookies-whitelist>'
-                    + '</account>';
-        rest.put('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
-          data: cooki,
-          headers: {'Content-Type': 'application/xml'}
-        }).once('complete', function(data, o) {
-          if (o.errors) {
-            log('#' + errid + ' Ошибка во время отправки списка cookies в insales ' + JSON.stringify(o), 'error');
+      service_uninstall(req, res, insales_id, u, errid);
+    } else {
+      service_install(req, res, insales_id, u, errid);
+    }
+  });
+}
+
+function service_uninstall(req, res, insales_id, u, errid) {
+  rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
+    headers: {'Content-Type': 'application/xml'}
+  }).once('complete', function(c) {
+    var tr = 0;
+    var cookies = c.account['client-cookies-whitelist'][0].split('\r\n');
+    var index = cookies.indexOf('INSALES_MAILTRIG_CUSTOMER_ID');
+    if (index > -1) {
+      cookies.splice(index, 1);
+    }
+    var cooki   = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
+                + '<account>'
+                + '<client-cookies-whitelist>' + cookies.join('\r\n') + '</client-cookies-whitelist>'
+                + '</account>';
+    rest.put('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
+      data: cooki,
+      headers: {'Content-Type': 'application/xml'}
+    }).once('complete', function(data, o) {
+      if (o.errors) {
+        log('#' + errid + ' Ошибка во время отправки списка cookies в insales ' + JSON.stringify(o), 'error');
+        res.send(errid);
+      } else {
+        log('Успешно отправлен список cookies в insales');
+        u[0].cookies = false;
+        u[0].save(function (err) {
+          if (err) {
+            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
             res.send(errid);
           } else {
-            log('Отправлен список cookies в insales');
+            log('Успешно удалено cookie');
+            var webhooks = u[0].webhook.split(',');
+            if ((webhooks[0] !== 0) || (webhooks[0] !== undefined)) {
+              rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks/' + webhooks[0] + '.xml', {
+                headers: {'Content-Type': 'application/xml'}
+              }).once('complete', function(o) {
+                if (o.errors) {
+                  log('#' + errid + ' Ошибка во время отправки запроса на удаление webhook ' + JSON.stringify(o), 'error');
+                  res.send(errid);
+                } else {
+                  log('Успешно удалён первый webhook');
+                  var wh = webhooks;
+                  var ind = wh.indexOf(webhooks[0]);
+                  if (ind > -1) {
+                    wh.splice(ind, 1);
+                    u[0].webhook = wh;
+                  } else {
+                    u[0].webhook = 0;
+                  }
+                  u[0].save(function (err) {
+                    if (err) {
+                      log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                      res.send(errid);
+                    } else {
+                      if ((webhooks[1] !== 0) || (webhooks[1] !== undefined)) {
+                        rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhook/' + webhooks[1] + '.xml', {
+                          headers: {'Content-Type': 'application/xml'}
+                        }).once('complete', function(o) {
+                          if (o.errors) {
+                            log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                            res.send(errid);
+                          } else {
+                            log('Успешно удалён второй webhook');
+                            u[0].webhook = 0;
+                            u[0].save(function (err) {
+                              if (err) {
+                                log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                res.send(errid);
+                              } else {
+                                if (u[0].jstagid_var !== 0) {
+                                  rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_var + '.xml', {
+                                    headers: {'Content-Type': 'application/xml'}
+                                  }).once('complete', function(o) {
+                                    if (o.errors) {
+                                      log('#' + errid + ' Ошибка во время удаления js с переменными ' + JSON.stringify(o), 'error');
+                                      res.send(errid);
+                                    } else {
+                                      log('Успешно удалён js с переменными');
+                                      u[0].jstagid_var = 0;
+                                      u[0].save(function (err) {
+                                        if (err) {
+                                          log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                          res.send(errid);
+                                        } else {
+                                          if (u[0].jstagid_main !== 0) {
+                                            rest.delete('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_main + '.xml', {
+                                              headers: {'Content-Type': 'application/xml'}
+                                            }).once('complete', function(o) {
+                                              if (o.errors) {
+                                                log('#' + errid + ' Ошибка во время удаления главного js ' + JSON.stringify(o), 'error');
+                                                res.send(errid);
+                                              } else {
+                                                log('Успешно удалён главный js');
+                                                u[0].jstagid_main = 0;
+                                                u[0].save(function (err) {
+                                                  if (err) {
+                                                    log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                                    res.send(errid);
+                                                  } else {
+                                                    log('Сервисы выключены');
+                                                    res.send('off');
+                                                  }
+                                                });
+                                              }
+                                            });
+                                          } else {
+                                            log('Сервисы выключены');
+                                            res.send('off');
+                                          }
+                                        }
+                                      });
+                                    }
+                                  });
+                                } else {
+                                  log('Сервисы выключены');
+                                  res.send('off');
+                                }
+                              }
+                            });
+                          }
+                        });
+                      } else {
+                        log('Сервисы выключены');
+                        res.send('off');
+                      }
+                    }
+                  });
+                }
+              });
+            } else {
+              log('Сервисы выключены');
+              res.send('off');
+            }
+          }
+        });
+      }
+    });
+  });
+}
+
+function service_install(req, res, insales_id, u, errid) {
+  rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
+    headers: {'Content-Type': 'application/xml'}
+  }).once('complete', function(c) {
+    var tr = 0;
+    var cookies = c.account['client-cookies-whitelist'][0].split('\r\n');
+    var index = cookies.indexOf('INSALES_MAILTRIG_CUSTOMER_ID');
+    if (index > -1) {
+      log('Обнаружена cookie mailtrig, добавление не требуется');
+    } else {
+      cookies.push('INSALES_MAILTRIG_CUSTOMER_ID');
+    }
+    var cooki   = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
+                + '<account>'
+                + '<client-cookies-whitelist>' + cookies.join('\r\n') + '</client-cookies-whitelist>'
+                + '</account>';
+    rest.put('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
+      data: cooki,
+      headers: {'Content-Type': 'application/xml'}
+    }).once('complete', function(data, o) {
+      if (o.errors) {
+        log('#' + errid + ' Ошибка во время отправки списка cookies в insales ' + JSON.stringify(o), 'error');
+        res.send(errid);
+      } else {
+        log('Успешно отправлен список cookies в insales');
+        u[0].cookie = true;
+        u[0].save(function (err) {
+          if (err) {
+            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+            res.send(errid);
+          } else {
             var webhook1 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
                          + '<webhook>'
                          + '<address>http://test4.sovechkin.com/webhook</address>'
@@ -463,47 +618,80 @@ function service(req, res, insales_id) {
                 res.send(errid);
               } else {
                 log('Успешно установлен webhook на создание заказа');
-                var webhook2 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
-                             + '<webhook>'
-                             + '<address>http://test4.sovechkin.com/webhook</address>'
-                             + '<topic>orders/update</topic>'
-                             + '</webhook>';
-                rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
-                  data: webhook2,
-                  headers: {'Content-Type': 'application/xml'}
-                }).once('complete', function(o) {
-                  if (o.errors) {
-                    log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                u[0].webhook = '2';
+                u[0].save(function (err) {
+                  if (err) {
+                    log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
                     res.send(errid);
                   } else {
-                    var jstext = '<js-tag>'
-                               + '<type type=\"string\">JsTag::TextTag</type>'
-                               + '<content>console.log("test")</content>'
-                               + '</js-tag>';
-                    log('Успешно установлен webhook на обновление заказа');
-                    rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
-                      data: jstext,
+                    var webhook2 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
+                                 + '<webhook>'
+                                 + '<address>http://test4.sovechkin.com/webhook</address>'
+                                 + '<topic>orders/update</topic>'
+                                 + '</webhook>';
+                    rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
+                      data: webhook2,
                       headers: {'Content-Type': 'application/xml'}
                     }).once('complete', function(o) {
                       if (o.errors) {
                         log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
                         res.send(errid);
                       } else {
-                        var jsfile = '<js-tag>'
-                                   + '<type type=\"string\">JsTag::FileTag</type>'
-                                   + '<content>http://localhost:9000/js/mt.js</content>'
-                                   + '</js-tag>';
                         log('Успешно установлен webhook на обновление заказа');
-                        rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
-                          data: jsfile,
-                          headers: {'Content-Type': 'application/xml'}
-                        }).once('complete', function(o) {
-                          if (o.errors) {
-                            log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                        u[0].webhook = '2,3';
+                        u[0].save(function (err) {
+                          if (err) {
+                            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
                             res.send(errid);
                           } else {
-                            log('Успешно установлен webhook на обновление заказа');
-                            res.send(200);
+                            var jstext = '<js-tag>'
+                                       + '<type type=\"string\">JsTag::TextTag</type>'
+                                       + '<content>console.log("test")</content>'
+                                       + '</js-tag>';
+                            rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
+                              data: jstext,
+                              headers: {'Content-Type': 'application/xml'}
+                            }).once('complete', function(o) {
+                              if (o.errors) {
+                                log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                                res.send(errid);
+                              } else {
+                                log('Успешно установлен webhook на обновление заказа');
+                                u[0].jstagid_var = '12345';
+                                u[0].save(function (err) {
+                                  if (err) {
+                                    log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                    res.send(errid);
+                                  } else {
+                                    var jsfile = '<js-tag>'
+                                               + '<type type=\"string\">JsTag::FileTag</type>'
+                                               + '<content>http://localhost:9000/js/mt.js</content>'
+                                               + '</js-tag>';
+                                    rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
+                                      data: jsfile,
+                                      headers: {'Content-Type': 'application/xml'}
+                                    }).once('complete', function(o) {
+                                      if (o.errors) {
+                                        log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                                        res.send(errid);
+                                      } else {
+                                        log('Успешно установлен webhook на обновление заказа');
+                                        u[0].jstagid_main = '123';
+                                        u[0].save(function (err) {
+                                          if (err) {
+                                            log('#' + errid + ' Ошибка при ' + JSON.stringify(err), 'error');
+                                            res.send(errid);
+                                          } else {
+                                            log('Сервисы включены');
+                                            res.send('on');
+                                          }
+                                        });
+                                      }
+                                    });
+                                  }
+                                });
+                              }
+                            });
                           }
                         });
                       }
@@ -514,113 +702,8 @@ function service(req, res, insales_id) {
             });
           }
         });
-      });
-    } else {
-      rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
-        headers: {'Content-Type': 'application/xml'}
-      }).once('complete', function(c) {
-        var cookies = c.account['client-cookies-whitelist'][0].split('\r\n');
-        var tr = 0;
-        async.each(cookies, function(coo, callback) {
-          if (coo == 'INSALES_MAILTRIG_CUSTOMER_ID') {
-            log('Найдена cookie от mailtrig');
-            tr = 1;
-          }
-          callback();
-        }, function(err){
-             if(err) {
-               log('#' + errid + ' Произошла ошибка во время парсинга списка cookies из insales ' + JSON.stringify(err), 'error');
-               res.send(errid);
-             } else {
-               if (tr == 0) {
-                 cookies.push('INSALES_MAILTRIG_CUSTOMER_ID');
-                 var cooki   = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
-                             + '<account>'
-                             + '<client-cookies-whitelist>' + cookies.join('\r\n') + '</client-cookies-whitelist>'
-                             + '</account>';
-                 rest.put('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/checkout.xml', {
-                   data: cooki,
-                   headers: {'Content-Type': 'application/xml'}
-                 }).once('complete', function(data, o) {
-                   if (o.errors) {
-                     log('#' + errid + ' Ошибка во время отправки списка cookies в insales ' + JSON.stringify(o), 'error');
-                     res.send(errid);
-                   } else {
-                     log('Отправлен список cookies в insales');
-                     var webhook1 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
-                                  + '<webhook>'
-                                  + '<address>http://test4.sovechkin.com/webhook</address>'
-                                  + '<topic>orders/create</topic>'
-                                  + '</webhook>';
-                     rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
-                       data: webhook1,
-                       headers: {'Content-Type': 'application/xml'}
-                     }).once('complete', function(o) {
-                       if (o.errors) {
-                         log('#' + errid + ' Ошибка во время отправки запроса на создание webhook создание заказа ' + JSON.stringify(o), 'error');
-                         res.send(errid);
-                       } else {
-                         log('Успешно установлен webhook на создание заказа');
-                         var webhook2 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
-                                      + '<webhook>'
-                                      + '<address>http://test4.sovechkin.com/webhook</address>'
-                                      + '<topic>orders/update</topic>'
-                                      + '</webhook>';
-                         rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
-                           data: webhook2,
-                           headers: {'Content-Type': 'application/xml'}
-                         }).once('complete', function(o) {
-                           if (o.errors) {
-                             log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
-                             res.send(errid);
-                           } else {
-                             var jstext = '<js-tag>'
-                                        + '<type type=\"string\">JsTag::TextTag</type>'
-                                        + '<content>console.log("test")</content>'
-                                        + '</js-tag>';
-                             log('Успешно установлен webhook на обновление заказа');
-                             rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
-                               data: jstext,
-                               headers: {'Content-Type': 'application/xml'}
-                             }).once('complete', function(o) {
-                               if (o.errors) {
-                                 log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
-                                 res.send(errid);
-                               } else {
-                                 var jsfile = '<js-tag>'
-                                            + '<type type=\"string\">JsTag::FileTag</type>'
-                                            + '<content>http://localhost:9000/js/mt.js</content>'
-                                            + '</js-tag>';
-                                 log('Успешно установлен webhook на обновление заказа');
-                                 rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
-                                   data: jsfile,
-                                   headers: {'Content-Type': 'application/xml'}
-                                 }).once('complete', function(o) {
-                                   if (o.errors) {
-                                     log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
-                                     res.send(errid);
-                                   } else {
-                                     log('Успешно установлен webhook на обновление заказа');
-                                     res.send(200);
-                                   }
-                                 });
-                               }
-                             });
-                           }
-                         });
-                       }
-                     });
-                   }
-                 });
-               } else {
-                 log('Найдена cookie от mailtrig, отправка списка cookies в insales не нужна');
-                 res.send(200);
-               }
-             }
-           });
       }
-             );
-    }
+    });
   });
 }
 
