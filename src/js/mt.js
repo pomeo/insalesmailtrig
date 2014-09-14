@@ -4,6 +4,28 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   setInterval(doCheckCart, 2000);
 });
+
+var doCheckCart = function () {
+  if ($.cookie('cart') != 'json') {
+    try {
+      console.log(JSON.stringify($.parseJSON($.cookie('cart'))));
+      return $.parseJSON($.cookie('cart'));
+    }
+    catch(e) {
+      return null;
+    }
+  } else {
+    $.ajax({
+      url: "/cart_items.json",
+      dateType: 'json',
+      success: function(order){
+        console.log(order);
+        return order;
+      }
+    });
+  }
+};
+
 var generatePass = function() {
   var set = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
   var pass = '';
