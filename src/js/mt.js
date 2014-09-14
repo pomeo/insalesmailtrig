@@ -4,6 +4,16 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   setInterval(doCheckCart, 2000);
 });
+var generatePass = function() {
+  var set = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
+  var pass = '';
+  for (var i = 0; i < 10; i++) {
+    var p = Math.floor(Math.random() * set.length);
+    pass += set[p];
+  }
+  return pass;
+};
+
 function SHA256(s) {
   var chrsz   = 8;
   var hexcase = 0;
