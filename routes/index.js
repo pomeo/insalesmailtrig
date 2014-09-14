@@ -506,48 +506,24 @@ function service_uninstall(req, res, insales_id, u, errid) {
                                 log('#' + errid + ' Ошибка при сохранении флага установки webhookа обновление заказа в ноль в базу данных ' + JSON.stringify(err), 'error');
                                 res.send(errid);
                               } else {
-                                if (u[0].jstagid_var !== 0) {
-                                  rest.del('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_var + '.xml', {
+                                if (u[0].jstagid_main !== 0) {
+                                  rest.del('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_main + '.xml', {
                                     headers: {'Content-Type': 'application/xml'}
                                   }).once('complete', function(o) {
                                     if (o !== null) {
-                                      log('#' + errid + ' Ошибка во время удаления js с переменными ' + JSON.stringify(o), 'error');
+                                      log('#' + errid + ' Ошибка во время удаления js ' + JSON.stringify(o), 'error');
                                       res.send(errid);
                                     } else {
-                                      log('Успешно удалён js с переменными');
-                                      u[0].jstagid_var = 0;
+                                      log('Успешно удалён js');
+                                      u[0].jstagid_main = 0;
                                       u[0].updated_at = new Date();
                                       u[0].save(function (err) {
                                         if (err) {
-                                          log('#' + errid + ' Ошибка при сохранении флага установки js с переменными в ноль в базу данных ' + JSON.stringify(err), 'error');
+                                          log('#' + errid + ' Ошибка при сохранении флага установки js в ноль в базу данных ' + JSON.stringify(err), 'error');
                                           res.send(errid);
                                         } else {
-                                          if (u[0].jstagid_main !== 0) {
-                                            rest.del('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags/' + u[0].jstagid_main + '.xml', {
-                                              headers: {'Content-Type': 'application/xml'}
-                                            }).once('complete', function(o) {
-                                              if (o !== null) {
-                                                log('#' + errid + ' Ошибка во время удаления главного js ' + JSON.stringify(o), 'error');
-                                                res.send(errid);
-                                              } else {
-                                                log('Успешно удалён основной js');
-                                                u[0].jstagid_main = 0;
-                                                u[0].updated_at = new Date();
-                                                u[0].save(function (err) {
-                                                  if (err) {
-                                                    log('#' + errid + ' Ошибка при сохранении флага установки основного js в ноль в базу данных ' + JSON.stringify(err), 'error');
-                                                    res.send(errid);
-                                                  } else {
-                                                    log('Сервисы выключены');
-                                                    res.send('off');
-                                                  }
-                                                });
-                                              }
-                                            });
-                                          } else {
-                                            log('Сервисы выключены');
-                                            res.send('off');
-                                          }
+                                          log('Сервисы выключены');
+                                          res.send('off');
                                         }
                                       });
                                     }
