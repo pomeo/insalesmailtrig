@@ -632,52 +632,36 @@ function service_install(req, res, insales_id, u, errid) {
                             log('#' + errid + ' Ошибка при сохранении id вебхука обновление заказа в базу данных ' + JSON.stringify(err), 'error');
                             res.send(errid);
                           } else {
-                            var jstext = '<js-tag>'
-                                       + '<type type=\"string\">JsTag::TextTag</type>'
-                                       + '<content>console.log("test")</content>'
-                                       + '</js-tag>';
+                            var xml = 'window.mtusername = ' + u[0].username + ';'
+                                    + 'window.mtappid = ' + u[0].appid + ';'
+                                    + 'var fileref = document.createElement(\"script\");'
+                                    + 'fileref.setAttribute(\"type\",\"text/javascript\");'
+                                    + 'fileref.charset=\'utf-8\';'
+                                    + 'fileref.async = true;'
+                                    + 'fileref.setAttribute(\"src\", \"http://localhost:9000/js/mt.js\");'
+                                    + 'document.getElementsByTagName(\"head\")[0].appendChild(fileref);';
+                            var jstag = '<js-tag>'
+                                      + '<type type="string">JsTag::TextTag</type>'
+                                      + '<content>' + xml + '</content>'
+                                      + '</js-tag>';
                             rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
-                              data: jstext,
+                              data: jstag,
                               headers: {'Content-Type': 'application/xml'}
                             }).once('complete', function(o) {
                               if (o.errors) {
                                 log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
                                 res.send(errid);
                               } else {
-                                log('Успешно установлен js с переменными');
-                                u[0].jstagid_var = o['text-tag']['id'][0]._;
+                                log('Успешно установлен js');
+                                u[0].jstagid_main = o['text-tag']['id'][0]._;
                                 u[0].updated_at = new Date();
                                 u[0].save(function (err) {
                                   if (err) {
-                                    log('#' + errid + ' Ошибка при сохранении флага установки js с переменными в базу данных ' + JSON.stringify(err), 'error');
+                                    log('#' + errid + ' Ошибка при сохранении флага установки js в базу данных ' + JSON.stringify(err), 'error');
                                     res.send(errid);
                                   } else {
-                                    var jsfile = '<js-tag>'
-                                               + '<type type=\"string\">JsTag::FileTag</type>'
-                                               + '<content>http://localhost:9000/js/mt.js</content>'
-                                               + '</js-tag>';
-                                    rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/js_tags.xml', {
-                                      data: jsfile,
-                                      headers: {'Content-Type': 'application/xml'}
-                                    }).once('complete', function(o) {
-                                      if (o.errors) {
-                                        log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
-                                        res.send(errid);
-                                      } else {
-                                        log('Успешно установлен основной js');
-                                        u[0].jstagid_main = o['file-tag']['id'][0]._;
-                                        u[0].updated_at = new Date();
-                                        u[0].save(function (err) {
-                                          if (err) {
-                                            log('#' + errid + ' Ошибка при сохранении флага установки основного js в базу данных ' + JSON.stringify(err), 'error');
-                                            res.send(errid);
-                                          } else {
-                                            log('Сервисы включены');
-                                            res.send('on');
-                                          }
-                                        });
-                                      }
-                                    });
+                                    log('Сервисы включены');
+                                    res.send('on');
                                   }
                                 });
                               }
