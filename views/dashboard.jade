@@ -15,8 +15,11 @@ block content
     div#errorModal
     div.b-dashboard
       p.b-annot.b-annot-right СЕРВИС
-      if user.cookie && user.webhook && user.jstagid_main !== 0 && user.jstagid_var !== 0
+      if user.cookie == true
         div#turn.b-turn-on-or-off.b-turn-on
+          div.b-turn-slide
+          p.b-text-on ВКЛЮЧЕН
+          p.b-text-off ВЫКЛЮЧЕН
       else
         div#turn.b-turn-on-or-off.b-turn-off
           div.b-turn-slide
