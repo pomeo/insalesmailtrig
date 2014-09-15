@@ -688,7 +688,7 @@ var User = db.define('users', {
   insalesautologin   : { type: 'text' }, //Token автологина insales
   token              : { type: 'text' }, //Token для работы с API InSales
   mailtrig           : { type: 'boolean' }, //Флаг указывающий, что пользователь (администратор магазина) зарегистрирован в системе MailTrig
-  appid              : { type: 'integer' }, //AppId в системе MailTrig
+  appid              : { type: 'text' }, //AppId в системе MailTrig
   nameshop           : { type: 'text' }, //Название магазина
   nameadmin          : { type: 'text' }, //Имя администратора магазина
   phone              : { type: 'text' }, //Телефон администратора магазина
