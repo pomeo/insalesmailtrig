@@ -632,8 +632,8 @@ function service_install(req, res, insales_id, u, errid) {
                             log('#' + errid + ' Ошибка при сохранении id вебхука обновление заказа в базу данных ' + JSON.stringify(err), 'error');
                             res.send(errid);
                           } else {
-                            var xml = 'window.mtusername = ' + u[0].username + ';'
-                                    + 'window.mtappid = ' + u[0].appid + ';'
+                            var xml = 'window.mtusername = "' + u[0].username + '";'
+                                    + 'window.mtappid = "' + u[0].appid + '";'
                                     + 'var fileref = document.createElement(\"script\");'
                                     + 'fileref.setAttribute(\"type\",\"text/javascript\");'
                                     + 'fileref.charset=\'utf-8\';'
