@@ -16,21 +16,28 @@ var doCheckCart = function () {
   if ($.cookie('cart') != 'json') {
     try {
       console.log(JSON.stringify($.parseJSON($.cookie('cart'))));
-      return $.parseJSON($.cookie('cart'));
     }
     catch(e) {
       return null;
     }
   } else {
     $.ajax({
-      url: "/cart_items.json",
+      url: '/cart_items.json',
       dateType: 'json',
       success: function(order){
         console.log(order);
-        return order;
       }
     });
   }
+};
+
+var generateCusID = function() {
+  if (!Date.now) {
+    Date.now = function() {
+      return new Date().getTime();
+    }
+  }
+  return SHA256(window.mtappid + Date.now() + generatePass());
 };
 
 var generatePass = function() {
