@@ -315,6 +315,23 @@ router.post('/webhook', function(req, res) {
   res.send(200);
 });
 
+router.post('/visit/:appid/:username/:cusid', function(req, res) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,X-Requested-With');
+  var ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"visit"}]];
+  rest.get('http://app.mailtrig.ru/track.php?params=' + JSON.stringify(ar),{
+    headers: {'Content-Type': 'application/json'}
+  }).once('complete', function(response) {
+    var r = JSON.parse(response);
+    if ((r[0] == "_init:OK") && (r[1] == "_user:OK")) {
+      res.send('success');
+    } else {
+      log('Ошибка в ответе mailtrig ' + response,'error');
+      res.send(200);
+    }
+  })
+});
+
 // Сюда приходит запрос от insales на установку приложения
 router.get('/install', function(req, res) {
   if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
