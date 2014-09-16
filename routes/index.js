@@ -655,7 +655,7 @@ function service_install(req, res, insales_id, u, errid) {
                                     + 'fileref.setAttribute(\"type\",\"text/javascript\");'
                                     + 'fileref.charset=\'utf-8\';'
                                     + 'fileref.async = true;'
-                                    + 'fileref.setAttribute(\"src\", \"http://localhost:9000/js/mt.js\");'
+                                    + 'fileref.setAttribute(\"src\", \"http://' + process.env.mailtrigurl + '/js/mt.js\");'
                                     + 'document.getElementsByTagName(\"head\")[0].appendChild(fileref);';
                             var jstag = '<js-tag>'
                                       + '<type type="string">JsTag::TextTag</type>'
