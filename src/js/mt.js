@@ -31,6 +31,78 @@ var doCheckCart = function () {
   }
 };
 
+var a2 = [], a1 = [];
+
+var rest = function(ar) {
+  a2 = null;
+  a2 = JSON.parse(JSON.stringify(ar)).slice();
+  if (a1.length > 0) {
+    var delta = jsondiffpatch.create({
+      objectHash: function(obj) {
+        return obj.product_id;
+      },
+      arrays: {
+        detectMove: true
+      }
+    }).diff(a1, a2);
+    if (delta !== undefined) {
+      for (var i in delta) {
+        var item = delta[i];
+        if ((i[0] == '_') && (i[1] !== 't')) {
+          if (item[0]) {
+            var s = parseInt(item[0]['sale_price']) * parseInt(item[0]['quantity']);
+            $.post('http://' + window.mturl + '/events', {
+              appid: window.mtappid,
+              username: window.mtusername,
+              cusid: $.cookie('INSALES_MAILTRIG_CUSTOMER_ID'),
+              prdid: item[0]['product_id'],
+              vrnid: item[0]['variant_id'],
+              sum: s,
+              t: 'remove'
+            });
+          } else {
+            var s = parseInt(ar[i]['sale_price']) * parseInt(ar[i]['quantity']);
+            $.post('http://' + window.mturl + '/events', {
+              appid: window.mtappid,
+              username: window.mtusername,
+              cusid: $.cookie('INSALES_MAILTRIG_CUSTOMER_ID'),
+              prdid: ar[i]['product_id'],
+              vrnid: ar[i]['variant_id'],
+              sum: s,
+              t: 'update'
+            });
+          }
+        } else if ((i[0] !== '_')) {
+          if (item[0]) {
+            var s = parseInt(item[0]['sale_price']) * parseInt(item[0]['quantity']);
+            $.post('http://' + window.mturl + '/events', {
+              appid: window.mtappid,
+              username: window.mtusername,
+              cusid: $.cookie('INSALES_MAILTRIG_CUSTOMER_ID'),
+              prdid: item[0]['product_id'],
+              vrnid: item[0]['variant_id'],
+              sum: s,
+              t: 'add'
+            });
+          } else {
+            var s = parseInt(ar[i]['sale_price']) * parseInt(ar[i]['quantity']);
+            $.post('http://' + window.mturl + '/events', {
+              appid: window.mtappid,
+              username: window.mtusername,
+              cusid: $.cookie('INSALES_MAILTRIG_CUSTOMER_ID'),
+              prdid: ar[i]['product_id'],
+              vrnid: ar[i]['variant_id'],
+              sum: s,
+              t: 'update'
+            });
+          }
+        }
+      }
+    }
+  }
+  a1 = a2.slice();
+}
+
 var generateCusID = function() {
   if (!Date.now) {
     Date.now = function() {
