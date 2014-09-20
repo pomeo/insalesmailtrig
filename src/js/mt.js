@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 var doCheckCart = function () {
   if ($.cookie('cart') != 'json') {
     try {
-      console.log(JSON.stringify($.parseJSON($.cookie('cart'))));
+      rest($.parseJSON($.cookie('cart'))['order_lines']);
     }
     catch(e) {
       return null;
@@ -25,7 +25,7 @@ var doCheckCart = function () {
       url: '/cart_items.json',
       dateType: 'json',
       success: function(order){
-        console.log(order);
+        rest(order['order_lines']);
       }
     });
   }
