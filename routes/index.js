@@ -310,9 +310,56 @@ router.post('/dashboard', function(req, res) {
   }
 });
 
-router.post('/webhook', function(req, res) {
-  console.log(JSON.stringify(req.body));
-  res.send(200);
+router.post('/webhook/:insalesid', function(req, res) {
+  User.find({insalesid: req.param('insalesid')}, function (err, u) {
+    if (err) {
+      log(' ' + JSON.stringify(err), 'error');
+      res.send(200);
+    } else {
+      if (u[0].enabled) {
+        var ar = null;
+        if (req.body.order['financial-status'] == 'paid') {
+          if (req.body.order.cookies['INSALES-MAILTRIG-CUSTOMER-ID'] !== 'undefined') {
+            ar = [["_init",{"appId": u[0].appid,"username": u[0].username}],["_user",{"customer_id": req.body.order.cookies['INSALES-MAILTRIG-CUSTOMER-ID'], "email": req.body.order.client.email}],["_event",{"name": "purchase_finish", "order_id": req.body.order.id, "sum": req.body.order['total-price']}]];
+          } else {
+            ar = [["_init",{"appId": u[0].appid,"username": u[0].username}],["_user",{"customer_id": req.body.order.cookies['INSALES-MAILTRIG-CUSTOMER-ID'], "email": req.body.order.client.email}],["_event",{"name": "purchase_finish", "order_id": req.body.order.id, "sum": req.body.order['total-price']}]];
+          }
+          rest.get('http://app.mailtrig.ru/track.php?params=' + JSON.stringify(ar),{
+            headers: {'Content-Type': 'application/json'}
+          }).once('complete', function(response) {
+            var r = JSON.parse(response);
+            if ((r[0] == '_init:OK') && (r[1] == '_user:OK')) {
+              res.send(200);
+            } else {
+              log('Ошибка в ответе mailtrig ' + response,'error');
+              res.send(200);
+            }
+          });
+        } else {
+          if (req.body.order.cookies['INSALES-MAILTRIG-CUSTOMER-ID'] !== 'undefined') {
+            //ar = [["_init",{"appId": u[0].appid,"username": u[0].username}],["_user",{"customer_id": req.body.order.cookies['INSALES-MAILTRIG-CUSTOMER-ID'], "email": req.body.order.client.email}],["_event",{"name":"purchase_start", "order": req.body.order['order-lines']['order-line'], "order_id": req.body.order.id, "sum": req.body.order['items-price']}]];
+            ar = [["_init",{"appId": u[0].appid,"username": u[0].username}],["_user",{"customer_id": req.body.order.cookies['INSALES-MAILTRIG-CUSTOMER-ID'], "email": req.body.order.client.email}],["_event",{"name":"purchase_start", "order_id": req.body.order.id, "sum": req.body.order['items-price']}]];
+            rest.get('http://app.mailtrig.ru/track.php?params=' + JSON.stringify(ar),{
+              headers: {'Content-Type': 'application/json'}
+            }).once('complete', function(response) {
+              var r = JSON.parse(response);
+              if ((r[0] == '_init:OK') && (r[1] == '_user:OK')) {
+                res.send(200);
+              } else {
+                log('Ошибка в ответе mailtrig ' + response,'error');
+                res.send(200);
+              }
+            })
+          } else {
+            res.send(200);
+          }
+        }
+      } else {
+        log('Приложение в данном магазине выключено', 'error');
+        res.send(200);
+      }
+    }
+  });
 });
 
 router.post('/visit/:appid/:username/:cusid', function(req, res) {
