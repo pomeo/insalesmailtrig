@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 var doCheckCart = function () {
-  if ($.cookie('cart') != 'json') {
+  if ($.cookie('cart') == 'json') {
     try {
       rest($.parseJSON($.cookie('cart'))['order_lines']);
     }
