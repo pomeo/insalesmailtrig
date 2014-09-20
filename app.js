@@ -35,7 +35,7 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(xmlparser());
+app.use(xmlparser({trim: false, explicitArray: false, ignoreAttrs: true}));
 app.use(cookieParser());
 app.use(session({secret: process.env.SECRET, store: new MySQLStore(options)}))
 app.use(express.static(path.join(__dirname, 'public')));
