@@ -362,7 +362,7 @@ router.post('/webhook/:insalesid', function(req, res) {
   });
 });
 
-router.post('/visit/:appid/:username/:cusid', function(req, res) {
+router.post('/visit', function(req, res) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type,X-Requested-With');
   var ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"visit"}]];
