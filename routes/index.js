@@ -66,7 +66,7 @@ router.get('/', function(req, res) {
                 res.send(err, 500);
               } else {
                 log('Редирект в insales для автологина магазина ' + a[0].insalesurl)
-                res.redirect('http://' + a[0].insalesurl + '/admin/applications/' + process.env.insalesid + '/login?token=' + id + '&login=http://' + process.env.mailtrigurl);
+                res.redirect('http://' + a[0].insalesurl + '/admin/applications/' + process.env.insalesid + '/login?token=' + id + '&login=http://' + process.env.webhook);
               }
             });
           }
@@ -719,12 +719,12 @@ function service_install(req, res, insales_id, u, errid) {
                           } else {
                             var xml = 'window.mtusername = "' + u[0].username + '";'
                                     + 'window.mtappid = "' + u[0].appid + '";'
-                                    + 'window.mturl = "' + process.env.mailtrigurl + '";'
+                                    + 'window.mturl = "' + process.env.webhook + '";'
                                     + 'var fileref = document.createElement(\"script\");'
                                     + 'fileref.setAttribute(\"type\",\"text/javascript\");'
                                     + 'fileref.charset=\'utf-8\';'
                                     + 'fileref.async = true;'
-                                    + 'fileref.setAttribute(\"src\", \"http://' + process.env.mailtrigurl + '/js/mt.js\");'
+                                    + 'fileref.setAttribute(\"src\", \"http://' + process.env.webhook + '/js/mt.js\");'
                                     + 'document.getElementsByTagName(\"head\")[0].appendChild(fileref);';
                             var jstag = '<js-tag>'
                                       + '<type type="string">JsTag::TextTag</type>'
