@@ -3,7 +3,11 @@ document.addEventListener('DOMContentLoaded', function() {
     $.cookie('INSALES_MAILTRIG_CUSTOMER_ID', generateCusID(), { expires: 20*365, path: '/' });
   }
   if ($.cookie('INSALES_MAILTRIG_VISIT') == null) {
-    $.post('http://' + window.mturl + '/visit/' + window.mtappid + '/' + window.mtusername + '/' + $.cookie('INSALES_MAILTRIG_CUSTOMER_ID'), function(data) {
+    $.post('http://' + window.mturl + '/visit', {
+      appid: window.mtappid,
+      username: window.mtusername,
+      cusid: $.cookie('INSALES_MAILTRIG_CUSTOMER_ID')
+    }, function(data) {
       if (data == 'success') {
         $.cookie('INSALES_MAILTRIG_VISIT', 1, { expires: 1, path: '/' });
       }
