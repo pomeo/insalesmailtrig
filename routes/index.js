@@ -675,7 +675,7 @@ function service_install(req, res, insales_id, u, errid) {
           } else {
             var webhook1 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
                          + '<webhook>'
-                         + '<address>http://' + process.env.webhook + '/webhook</address>'
+                         + '<address>http://' + process.env.webhook + '/webhook/' + u[0].insalesid + '</address>'
                          + '<topic>orders/create</topic>'
                          + '</webhook>';
             rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
@@ -698,7 +698,7 @@ function service_install(req, res, insales_id, u, errid) {
                   } else {
                     var webhook2 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
                                  + '<webhook>'
-                                 + '<address>http://' + process.env.webhook + '/webhook</address>'
+                                 + '<address>http://' + process.env.webhook + '/webhook/' + u[0].insalesid + '</address>'
                                  + '<topic>orders/update</topic>'
                                  + '</webhook>';
                     rest.post('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/webhooks.xml', {
