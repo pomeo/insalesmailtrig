@@ -332,6 +332,28 @@ router.post('/visit/:appid/:username/:cusid', function(req, res) {
   })
 });
 
+router.post('/events', function(req, res) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,X-Requested-With');
+  var ar = [];
+  if (req.param('t') == 'add') {
+    ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"add_to_cart", "variant_id": req.param('vrnid'), "product_id": req.param('prdid'), "sum": req.param('sum')}]];
+  } else if (req.param('t') == 'remove') {
+    ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"delete_from_cart", "variant_id": req.param('vrnid'), "product_id": req.param('prdid'), "sum": req.param('sum')}]];
+  } else if (req.param('t') == 'update') {
+    ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"cart_update", "variant_id": req.param('vrnid'), "product_id": req.param('prdid'), "sum": req.param('sum')}]];
+  }
+  rest.get('http://app.mailtrig.ru/track.php?params=' + JSON.stringify(ar),{
+    headers: {'Content-Type': 'application/json'}
+  }).once('complete', function(response) {
+    var r = JSON.parse(response);
+    if ((r[0] !== '_init:OK') && (r[1] !== '_user:OK')) {
+      log('Ошибка в ответе mailtrig ' + response,'error');
+    }
+  });
+  res.send(200);
+});
+
 // Сюда приходит запрос от insales на установку приложения
 router.get('/install', function(req, res) {
   if ((req.query.shop !== '') && (req.query.token !== '') && (req.query.insales_id !== '') && req.query.shop && req.query.token && req.query.insales_id) {
