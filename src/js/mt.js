@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-  setInterval(doCheckCart, 2000);
+  setInterval(doCheckCart, 1000);
 });
 
 var doCheckCart = function () {
