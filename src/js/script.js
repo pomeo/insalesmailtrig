@@ -63,7 +63,12 @@ $(document).ready(function() {
       $(form).ajaxSubmit({
         success: function (response) {
           if (response == 'success') {
-            window.location.replace('/dashboard');
+            $.ajax({
+              url: '/service'
+            })
+            .done(function(response) {
+              window.location.replace('/dashboard');
+            });
           } else if (response == '401') {
             $('#errorModal').easyModal({
               autoOpen: true,
@@ -208,7 +213,12 @@ $(document).ready(function() {
       $(form).ajaxSubmit({
         success: function (response) {
           if (response == 'success') {
-            window.location.replace('/dashboard');
+            $.ajax({
+              url: '/service'
+            })
+            .done(function(response) {
+              window.location.replace('/dashboard');
+            });
           } else if (response == '401') {
             $('#errorModal').easyModal({
               autoOpen: true,
