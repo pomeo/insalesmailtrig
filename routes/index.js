@@ -40,6 +40,7 @@ router.get('/', function(req, res) {
           res.redirect('/');
         } else {
           log('#' + errid + ' Ошибка автологина, token не соотвествует', 'error');
+          log('id магазина: ' + a[0].insalesid, 'error');
           res.send('#' + errid + ' Ошибка автологина', 403);
         }
       }
@@ -63,6 +64,7 @@ router.get('/', function(req, res) {
             a[0].save(function (err) {
               if (err) {
                 log('Ошибка сохранения token для автологина в базу данных', 'error');
+                log('id магазина: ' + a[0].insalesid, 'error');
                 res.send(err, 500);
               } else {
                 log('Редирект в insales для автологина магазина ' + a[0].insalesurl)
@@ -93,6 +95,7 @@ router.get('/registration', function(req, res) {
         rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/account.xml').once('complete', function(response) {
           if (response.errors) {
             log('#' + errid + ' Ошибка во время запроса данных аккаунта из insales ' + JSON.stringify(response), 'error');
+            log('id магазина: ' + u[0].insalesid, 'error');
             res.send(errid);
           } else {
             res.render('registration', { title: '', user: response, link: u[0] });
@@ -130,6 +133,7 @@ router.post('/registration', function(req, res) {
           User.find({ insalesid: req.session.insalesid }, function (err, u) {
             if (err) {
               log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
+              log('id магазина: ' + u[0].insalesid, 'error');
               res.send(errid);
             } else {
               u[0].autologin = crypto.createHash('md5').update(req.param('email') + p).digest('hex');
@@ -144,6 +148,7 @@ router.post('/registration', function(req, res) {
               u[0].save(function (e) {
                 if (e) {
                   log('#' + errid + ' Произошла ошибка сохранения в базу данных' + JSON.stringify(e), 'error');
+                  log('id магазина: ' + u[0].insalesid, 'error');
                   res.send(errid);
                 } else {
                   res.send('success');
@@ -174,6 +179,7 @@ router.get('/login', function(req, res) {
     User.find({ insalesid: req.session.insalesid }, function (err, u) {
       if (err) {
         log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
+        log('id магазина: ' + u[0].insalesid, 'error');
         res.send(errid);
       } else {
         res.render('login', { title: '', link: u[0] });
@@ -199,6 +205,7 @@ router.post('/login', function(req, res) {
       var errid = cc.generate({ parts : 1, partLen : 6 });
       if (o.errors) {
         log('#' + errid + ' Ошибка во время регистрации нового пользователя, запрос appId: ' + JSON.stringify(o), 'error');
+        log('id магазина: ' + req.session.insalesid, 'error');
         res.send(errid);
       } else {
         var appId = JSON.parse(o);
@@ -206,11 +213,13 @@ router.post('/login', function(req, res) {
           User.find({ insalesid: req.session.insalesid }, function (err, u) {
             if (err) {
               log('#' + errid + ' Произошла ошибка обращения к базе данных ' + JSON.stringify(err), 'error');
+              log('id магазина: ' + u[0].insalesid, 'error');
               res.send(errid);
             } else {
               rest.get('http://' + process.env.insalesid + ':' + u[0].token + '@' + u[0].insalesurl + '/admin/account.xml').once('complete', function(response) {
                 if (response.errors) {
                   log('#' + errid + ' Ошибка во время запроса данных аккаунта из insales ' + JSON.stringify(response), 'error');
+                  log('id магазина: ' + u[0].insalesid, 'error');
                   res.send(errid);
                 } else {
                   var p = crypto.createHash('md5').update(req.param('pass')).digest('hex');
@@ -226,6 +235,7 @@ router.post('/login', function(req, res) {
                   u[0].save(function (e) {
                     if (e) {
                       log('#' + errid + ' Произошла ошибка сохранения в базу данных' + JSON.stringify(e), 'error');
+                      log('id магазина: ' + u[0].insalesid, 'error');
                       res.send(errid);
                     } else {
                       res.send('success');
@@ -288,6 +298,7 @@ router.get('/dashboard', function(req, res) {
       } else {
         if (u[0].appid) {
           log('При открытии /dashboard не найдена запись о пользователе в базе', 'error');
+          log('id магазина: ' + u[0].insalesid, 'error');
           res.redirect('/');
         } else {
           res.render('dashboard', { title: '', user: u[0] });
@@ -312,7 +323,7 @@ router.post('/dashboard', function(req, res) {
 router.post('/webhook/:insalesid', function(req, res) {
   User.find({insalesid: req.param('insalesid')}, function (err, u) {
     if (err) {
-      log(' ' + JSON.stringify(err), 'error');
+      log('Ошибка запроса к базе данных ' + JSON.stringify(err), 'error');
       res.send(200);
     } else {
       if (u[0].enabled) {
@@ -330,7 +341,8 @@ router.post('/webhook/:insalesid', function(req, res) {
             if ((r[0] == '_init:OK') && (r[1] == '_user:OK')) {
               res.send(200);
             } else {
-              log('Ошибка в ответе mailtrig ' + response,'error');
+              log('Ошибка в ответе mailtrig ' + response, 'error');
+              log('Отправленный массив: ' + JSON.stringify(ar), 'error');
               res.send(200);
             }
           });
@@ -345,7 +357,8 @@ router.post('/webhook/:insalesid', function(req, res) {
               if ((r[0] == '_init:OK') && (r[1] == '_user:OK')) {
                 res.send(200);
               } else {
-                log('Ошибка в ответе mailtrig ' + response,'error');
+                log('Ошибка в ответе mailtrig ' + response, 'error');
+                log('Отправленный массив: ' + JSON.stringify(ar), 'error');
                 res.send(200);
               }
             })
@@ -373,6 +386,7 @@ router.post('/visit', function(req, res) {
       res.send('success');
     } else {
       log('Ошибка в ответе mailtrig ' + response,'error');
+      log('Отправленный массив: ' + JSON.stringify(ar), 'error');
       res.send(200);
     }
   })
@@ -394,7 +408,8 @@ router.post('/events', function(req, res) {
   }).once('complete', function(response) {
     var r = JSON.parse(response);
     if ((r[0] !== '_init:OK') && (r[1] !== '_user:OK')) {
-      log('Ошибка в ответе mailtrig ' + response,'error');
+      log('Ошибка в ответе mailtrig ' + response, 'error');
+      log('Отправленный массив: ' + JSON.stringify(ar), 'error');
     }
   });
   res.send(200);
@@ -419,7 +434,8 @@ router.get('/install', function(req, res) {
           enabled      : true
         }], function (err, app) {
               if (err) {
-                log('Ошибка установки приложения в insales');
+                log('Ошибка установки приложения в insales', 'error');
+                log('id магазина: ' + req.query.insales_id, 'error');
                 log(err, 'error');
                 res.send(err, 500);
               } else {
@@ -439,6 +455,7 @@ router.get('/install', function(req, res) {
             if (err) {
               log('Ошибка при активации существующего в базе приложения', 'error');
               log(err, 'error');
+              log('id магазина: ' + u[0].insalesid, 'error');
               res.send(err, 500);
             } else {
               log('Приложение успешно установлено в insales');
@@ -472,6 +489,7 @@ router.get('/uninstall', function(req, res) {
           if (err) {
             log('Ошибка удаления приложения. Проблема сохранения изменений в базу данных', 'error');
             log(err, 'error');
+            log('id магазина: ' + req.query.insales_id, 'error');
             res.send(err, 500);
           } else {
             log('Приложение успешно удалено из insales');
@@ -541,6 +559,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
     }).once('complete', function(data, o) {
       if (o.errors) {
         log('#' + errid + ' Ошибка во время отправки списка cookies в insales ' + JSON.stringify(o), 'error');
+        log('id магазина: ' + u[0].insalesid, 'error');
         res.send(errid);
       } else {
         log('Успешно отправлен список cookies в insales');
@@ -549,6 +568,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
         u[0].save(function (err) {
           if (err) {
             log('#' + errid + ' Ошибка при сохранении флага наличия cookie в false в базу данных ' + JSON.stringify(err), 'error');
+            log('id магазина: ' + u[0].insalesid, 'error');
             res.send(errid);
           } else {
             log('Успешно удалено cookie');
@@ -559,6 +579,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
               }).once('complete', function(o) {
                 if (o !== null) {
                   log('#' + errid + ' Ошибка во время отправки запроса на удаление webhook ' + JSON.stringify(o), 'error');
+                  log('id магазина: ' + u[0].insalesid, 'error');
                   res.send(errid);
                 } else {
                   log('Успешно удалён первый webhook');
@@ -573,6 +594,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
                   u[0].save(function (err) {
                     if (err) {
                       log('#' + errid + ' Ошибка при сохранении флага установки webhookа создание заказа в базу данных ' + JSON.stringify(err), 'error');
+                      log('id магазина: ' + u[0].insalesid, 'error');
                       res.send(errid);
                     } else {
                       if ((webhooks[0] !== 0) && (webhooks[0] !== undefined)) {
@@ -581,6 +603,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
                         }).once('complete', function(o) {
                           if (o !== null) {
                             log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                            log('id магазина: ' + u[0].insalesid, 'error');
                             res.send(errid);
                           } else {
                             log('Успешно удалён второй webhook');
@@ -589,6 +612,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
                             u[0].save(function (err) {
                               if (err) {
                                 log('#' + errid + ' Ошибка при сохранении флага установки webhookа обновление заказа в ноль в базу данных ' + JSON.stringify(err), 'error');
+                                log('id магазина: ' + u[0].insalesid, 'error');
                                 res.send(errid);
                               } else {
                                 if (u[0].jstagid_main !== 0) {
@@ -597,6 +621,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
                                   }).once('complete', function(o) {
                                     if (o !== null) {
                                       log('#' + errid + ' Ошибка во время удаления js ' + JSON.stringify(o), 'error');
+                                      log('id магазина: ' + u[0].insalesid, 'error');
                                       res.send(errid);
                                     } else {
                                       log('Успешно удалён js');
@@ -605,6 +630,7 @@ function service_uninstall(req, res, insales_id, u, errid) {
                                       u[0].save(function (err) {
                                         if (err) {
                                           log('#' + errid + ' Ошибка при сохранении флага установки js в ноль в базу данных ' + JSON.stringify(err), 'error');
+                                          log('id магазина: ' + u[0].insalesid, 'error');
                                           res.send(errid);
                                         } else {
                                           log('Сервисы выключены');
@@ -662,6 +688,7 @@ function service_install(req, res, insales_id, u, errid) {
     }).once('complete', function(data, o) {
       if (o.errors) {
         log('#' + errid + ' Ошибка во время отправки списка cookies в insales ' + JSON.stringify(o), 'error');
+        log('id магазина: ' + u[0].insalesid, 'error');
         res.send(errid);
       } else {
         log('Успешно отправлен список cookies в insales');
@@ -670,6 +697,7 @@ function service_install(req, res, insales_id, u, errid) {
         u[0].save(function (err) {
           if (err) {
             log('#' + errid + ' Ошибка при сохранении флага cookie в базу данных ' + JSON.stringify(err), 'error');
+            log('id магазина: ' + u[0].insalesid, 'error');
             res.send(errid);
           } else {
             var webhook1 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
@@ -683,6 +711,7 @@ function service_install(req, res, insales_id, u, errid) {
             }).once('complete', function(o) {
               if (o.errors) {
                 log('#' + errid + ' Ошибка во время отправки запроса на создание webhook создание заказа ' + JSON.stringify(o), 'error');
+                log('id магазина: ' + u[0].insalesid, 'error');
                 res.send(errid);
               } else {
                 log('Успешно установлен webhook на создание заказа');
@@ -693,6 +722,7 @@ function service_install(req, res, insales_id, u, errid) {
                 u[0].save(function (err) {
                   if (err) {
                     log('#' + errid + ' Ошибка при сохранении id вебхука создания заказа в базу данных ' + JSON.stringify(err), 'error');
+                    log('id магазина: ' + u[0].insalesid, 'error');
                     res.send(errid);
                   } else {
                     var webhook2 = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
@@ -706,6 +736,7 @@ function service_install(req, res, insales_id, u, errid) {
                     }).once('complete', function(o) {
                       if (o.errors) {
                         log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                        log('id магазина: ' + u[0].insalesid, 'error');
                         res.send(errid);
                       } else {
                         log('Успешно установлен webhook на обновление заказа');
@@ -715,6 +746,7 @@ function service_install(req, res, insales_id, u, errid) {
                         u[0].save(function (err) {
                           if (err) {
                             log('#' + errid + ' Ошибка при сохранении id вебхука обновление заказа в базу данных ' + JSON.stringify(err), 'error');
+                            log('id магазина: ' + u[0].insalesid, 'error');
                             res.send(errid);
                           } else {
                             var xml = 'window.mtusername = "' + u[0].username + '";'
@@ -736,6 +768,7 @@ function service_install(req, res, insales_id, u, errid) {
                             }).once('complete', function(o) {
                               if (o.errors) {
                                 log('#' + errid + ' Ошибка во время отправки запроса на создание webhook обновление заказа ' + JSON.stringify(o), 'error');
+                                log('id магазина: ' + u[0].insalesid, 'error');
                                 res.send(errid);
                               } else {
                                 log('Успешно установлен js');
@@ -744,6 +777,7 @@ function service_install(req, res, insales_id, u, errid) {
                                 u[0].save(function (err) {
                                   if (err) {
                                     log('#' + errid + ' Ошибка при сохранении флага установки js в базу данных ' + JSON.stringify(err), 'error');
+                                    log('id магазина: ' + u[0].insalesid, 'error');
                                     res.send(errid);
                                   } else {
                                     log('Сервисы включены');
