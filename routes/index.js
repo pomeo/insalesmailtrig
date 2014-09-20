@@ -370,7 +370,7 @@ router.post('/visit', function(req, res) {
     headers: {'Content-Type': 'application/json'}
   }).once('complete', function(response) {
     var r = JSON.parse(response);
-    if ((r[0] == "_init:OK") && (r[1] == "_user:OK")) {
+    if ((r[0] == '_init:OK') && (r[1] == '_user:OK')) {
       res.send('success');
     } else {
       log('Ошибка в ответе mailtrig ' + response,'error');
