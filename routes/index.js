@@ -159,7 +159,7 @@ router.post('/registration', function(req, res) {
         } else {
           if ((appId.error == '401')||(appId.error == '402')||(appId.error == '403')||(appId.error == '404')||(appId.error == '405')||(appId.error == '406')||(appId.error == '407')) {
             log('Ошибка в ответе от mailtrig ' + JSON.stringify(appId), 'error');
-            res.send(appId.error);
+            res.json(appId.error);
           } else {
             log('#' + errid + ' Ошибка в ответе от mailtrig на запрос регистрации: ' + JSON.stringify(o), 'warn');
             res.send(errid);
@@ -248,7 +248,7 @@ router.post('/login', function(req, res) {
         } else {
           if ((appId.error == '401')||(appId.error == '402')||(appId.error == '403')||(appId.error == '404')||(appId.error == '405')||(appId.error == '406')||(appId.error == '407')) {
             log('Ошибка в ответе от mailtrig ' + JSON.stringify(appId), 'error');
-            res.send(appId.error);
+            res.json(appId.error);
           } else {
             log('#' + errid + ' Ошибка в ответе от mailtrig на запрос appId: ' + JSON.stringify(o), 'warn');
             res.send(errid);
