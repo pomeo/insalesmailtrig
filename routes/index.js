@@ -13,6 +13,7 @@ var express    = require('express'),
     cc         = require('coupon-code'),
     logger     = new (winston.Logger)({
       transports: [
+        //new (winston.transports.Console)(),
         new (winston.transports.File)({ filename: process.env.applog + 'app.log' })
       ]
     }),
