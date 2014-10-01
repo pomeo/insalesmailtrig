@@ -177,7 +177,19 @@ $(document).ready(function() {
       $(form).ajaxSubmit({
         success: function (response) {
           if (response == 'success') {
-            window.location.replace('/login');
+            $('#errorModal').easyModal({
+              autoOpen: true,
+              overlayOpacity: 0.5,
+              overlayColor: '#666',
+              overlayClose: true,
+              closeOnEscape: true,
+              onOpen: function(myModal){
+                $(myModal).text('Письмо с новым паролем отправлено на вашу почту');
+              }
+            });
+            setTimeout(function(){
+              window.location.replace('/login')
+            }, 3000);
           }
         }
       });
