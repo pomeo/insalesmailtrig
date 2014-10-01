@@ -274,7 +274,15 @@ router.get('/remember', function(req, res) {
 
 router.post('/remember', function(req, res) {
   if (req.session.insalesid) {
-    res.send('success');
+    rest.post('http://app.mailtrig.ru/common/auth_new.php', {
+      data: {
+        'email': req.param('email'),
+        'forgot_password': 1
+      },
+      headers: {'Content-Type': 'application/json'}
+    }).once('complete', function(o) {
+      res.send('success');
+    });
   } else {
     log('Попытка обращения с отсутствием сессии', 'warn');
     res.send('Вход возможен только из панели администратора insales -> приложения -> установленные -> войти', 403);
