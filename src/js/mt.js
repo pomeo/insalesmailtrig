@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-  setInterval(doCheckCart, 1000);
+  setInterval(doCheckCart, 200);
 });
 
 var doCheckCart = function () {
