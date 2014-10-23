@@ -17,13 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 var doCheckCart = function () {
-  if ($.cookie('cart') == 'json') {
-    try {
-      rest($.parseJSON($.cookie('cart'))['order_lines']);
-    }
-    catch(e) {
-      return null;
-    }
+  if (typeof $.parseJSON($.cookie('cart')) === 'object') {
+    rest($.parseJSON($.cookie('cart'))['order_lines']);
   } else {
     $.ajax({
       url: '/cart_items.json',
