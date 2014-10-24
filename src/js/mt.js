@@ -14,13 +14,13 @@ function domContentLoaded() {
       username: window.mtusername,
       cusid: $.cookie('INSALES_MAILTRIG_CUSTOMER_ID')
     }, function(data) {
-      if (data == 'success') {
-        $.cookie('INSALES_MAILTRIG_VISIT', 1, { expires: 1, path: '/' });
-      }
-    });
+         if (data == 'success') {
+           $.cookie('INSALES_MAILTRIG_VISIT', 1, { expires: 1, path: '/' });
+         }
+       });
   }
-  setInterval(doCheckCart, 200);
-});
+  setInterval(doCheckCart, 500);
+}
 
 var doCheckCart = function () {
   if (typeof $.parseJSON($.cookie('cart')) === 'object') {
