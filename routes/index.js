@@ -406,10 +406,13 @@ router.post('/events', function(req, res) {
   res.header('Access-Control-Allow-Headers', 'Content-Type,X-Requested-With');
   var ar = [];
   if (req.param('t') == 'add') {
+    log('Добавлено в корзину. username: ' + req.param('username') + ' product id: ' + req.param('prdid') + ' сумма: ' + req.param('sum'));
     ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"add_to_cart", "variant_id": req.param('vrnid'), "product_id": req.param('prdid'), "sum": req.param('sum')}]];
   } else if (req.param('t') == 'remove') {
+    log('Удалено их корзины. username: ' + req.param('username') + ' product id: ' + req.param('prdid') + ' сумма: ' + req.param('sum'));
     ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"delete_from_cart", "variant_id": req.param('vrnid'), "product_id": req.param('prdid'), "sum": req.param('sum')}]];
   } else if (req.param('t') == 'update') {
+    log('Обновлено в корзине. username: ' + req.param('username') + ' product id: ' + req.param('prdid') + ' сумма: ' + req.param('sum'));
     ar = [["_init",{"appId": req.param('appid'),"username": req.param('username')}],["_user",{"customer_id": req.param('cusid')}],["_event",{"name":"cart_update", "variant_id": req.param('vrnid'), "product_id": req.param('prdid'), "sum": req.param('sum')}]];
   }
   rest.get('http://app.mailtrig.ru/track.php?params=' + JSON.stringify(ar),{
