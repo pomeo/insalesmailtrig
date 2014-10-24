@@ -23,16 +23,20 @@ function domContentLoaded() {
 }
 
 var doCheckCart = function () {
-  if (typeof $.parseJSON($.cookie('cart')) === 'object') {
-    rest($.parseJSON($.cookie('cart'))['order_lines']);
+  if ($.cookie('cart') === null) {
+    rest([]);
   } else {
-    $.ajax({
-      url: '/cart_items.json',
-      dateType: 'json',
-      success: function(order){
-        rest(order['order_lines']);
-      }
-    });
+    if ((typeof $.parseJSON($.cookie('cart')) === 'object') && ($.cookie('cart') !== null)) {
+      rest($.parseJSON($.cookie('cart'))['order_lines']);
+    } else {
+      $.ajax({
+        url: '/cart_items.json',
+        dateType: 'json',
+        success: function(order){
+          rest(order['order_lines']);
+        }
+      });
+    }
   }
 };
 
