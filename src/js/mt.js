@@ -1,4 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.onreadystatechange = function () {
+  if (document.readyState == "complete") {
+    domContentLoaded();
+  }
+}
+
+function domContentLoaded() {
   if ($.cookie('INSALES_MAILTRIG_CUSTOMER_ID') == null) {
     $.cookie('INSALES_MAILTRIG_CUSTOMER_ID', generateCusID(), { expires: 20*365, path: '/' });
   }
