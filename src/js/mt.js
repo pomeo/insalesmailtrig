@@ -23,7 +23,7 @@ function domContentLoaded() {
 }
 
 var doCheckCart = function () {
-  if ($.cookie('cart') === null) {
+  if (($.cookie('cart') === null) || ($.cookie('cart') == '')) {
     rest([]);
   } else {
     if ((typeof $.parseJSON($.cookie('cart')) === 'object') && ($.cookie('cart') !== null)) {
