@@ -41,7 +41,6 @@ router.get('/', function(req, res) {
           res.redirect('/');
         } else {
           log('#' + errid + ' Ошибка автологина, token не соотвествует', 'error');
-          log('id магазина: ' + a[0].insalesid, 'error');
           res.send('#' + errid + ' Ошибка автологина', 403);
         }
       }
